@@ -1,0 +1,70 @@
+<html>
+  <body>
+    <form action="" method="GET">
+      <textarea cols="100" rows="30" id="message-list"></textarea>
+      <br /><br />
+      <input type="text" id="user-token-input" />
+      <input type="button" value="open ws" id="user-token-button" />
+
+      <input type="text" id="chat-message-input" />
+      <input type="button" value="send" id="chat-message-submit" />
+    </form>
+  </body>
+
+  <script>
+    /*
+       ffc7184ee0503ceea38a1fa3250a42a1dcceeb30 Brad
+    */
+
+    var socket;
+
+    document.querySelector("#user-token-button").onclick = () => {
+      const CLUB_ID = 13;
+
+      const valueInput = document.querySelector("#user-token-input").value;
+
+      const url = `ws://192.168.1.4:8080/ws/club/${CLUB_ID}/?token=${valueInput}`;
+      console.log(url);
+
+      socket = new WebSocket(url);
+
+      socket.onmessage = ({ data }) => {
+        console.log(data);
+        // const response = JSON.parse(data);
+        // const content = JSON.parse(response.content);
+        // const message = JSON.parse(content.message);
+
+        // const list = message.sender.username + " : " + message.content;
+        // document.getElementById("message-list").innerHTML += list;
+      };
+
+      socket.onopen = () => {
+        console.log("[websocket] open");
+      };
+
+      socket.onclose = () => {
+        console.log("[websocket] close");
+      };
+
+      socket.onerror = (error) => {
+        console.log("[websocket]", error);
+      };
+    };
+
+    document.querySelector("#chat-message-submit").onclick = () => {
+      const valueInput = document.querySelector("#chat-message-input").value;
+
+      const message = {
+        id: "temp-id",
+        content: valueInput,
+      };
+
+      socket.send(
+        JSON.stringify({
+          message,
+          action: "send_message",
+        })
+      );
+    };
+  </script>
+</html>

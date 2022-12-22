@@ -1,0 +1,75 @@
+<html>
+  <body>
+    <form action="" method="GET">
+      <br /><br />
+
+      <input type="text" id="chat-message-input" />
+      <input type="button" value="send" id="chat-message-submit" />
+      <input type="button" value="im typing" id="typing" />
+    </form>
+  </body>
+
+  <script>
+    /* 
+       2114dcc7a9ec3a6f0ea7d846e01f3681d00cf11e Enzo / 7
+       7adca13c64823c89d5ef514f4e86fe2f3a38ad56 Ryan / 3
+       9763db54042cc8b27d965467db0bdfe0bed832fb Gaga / 8
+    */
+
+    var isTyping = false;
+    var socket;
+
+    const url = `ws://192.168.1.4:8080/ws/chat/7/?token=5d61b7a48dd09faf6da77098a0f43404a044e27c`;
+
+    socket = new WebSocket(url);
+
+    socket.onopen = () => {
+      console.log("[websocket] open");
+    };
+
+    socket.onmessage = ({ data }) => {
+      // let { action, content } = JSON.parse(data);
+      // let { message } = JSON.parse(content);
+      // message = JSON.parse(message);
+      // console.log(action);
+      // const list = message.sender + " : " + message.content;
+      // document.getElementById("message-list").innerHTML += list;
+    };
+
+    socket.onclose = () => {
+      console.log("[websocket] close");
+    };
+
+    socket.onerror = (error) => {
+      console.log("[websocket]", error);
+    };
+
+    document.querySelector("#typing").onclick = () => {
+      isTyping = !isTyping;
+
+      socket.send(
+        JSON.stringify({
+          is_typing: !isTyping,
+          action: "is_typing",
+        })
+      );
+    };
+
+    document.querySelector("#chat-message-submit").onclick = () => {
+      const valueInput = document.querySelector("#chat-message-input").value;
+
+      const message = {
+        id: "temp-id",
+        receiver: 4,
+        content: valueInput,
+      };
+
+      socket.send(
+        JSON.stringify({
+          message,
+          action: "send_message",
+        })
+      );
+    };
+  </script>
+</html>

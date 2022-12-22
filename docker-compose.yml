@@ -16,7 +16,7 @@ services:
       REDIS_PORT: 6379
 
   database:
-    image: postgres
+    image: postgis/postgis
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:

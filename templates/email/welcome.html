@@ -1,0 +1,279 @@
+{% load i18n %}
+
+{% block subject %}
+    {% blocktrans %}Welcome to Real{% endblocktrans %}
+{% endblock %}
+
+{% block html_body %}
+    <!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <meta name="color-scheme" content="light only">
+
+        <title>Token Verification</title>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500&family=Space+Mono&display=swap"
+              rel="stylesheet">
+
+        <style type="text/css">
+            body {
+                margin: 0;
+                font-family: 'Raleway', sans-serif;
+                padding: 32px 0;
+            }
+
+            .gmail-blend-screen {
+                background: #000;
+                mix-blend-mode: screen;
+            }
+
+            .gmail-blend-difference {
+                background: #000;
+                mix-blend-mode: difference;
+            }
+
+            table {
+                border-spacing: 0;
+            }
+
+            img {
+                border: 0;
+            }
+
+            td {
+                width: 160px;
+                text-align: center;
+                vertical-align: middle;
+                letter-spacing: 5px;
+                color: white;
+            }
+
+            .wrapper {
+                width: 100%;
+                table-layout: fixed;
+                padding-top: 32px;
+            }
+
+            .main {
+                margin: 0, auto;
+                width: 100%;
+                max-width: 600px;
+                border-spacing: 0px;
+            }
+
+            .logo {
+                width: 30%;
+            }
+
+            .title {
+                font-size: 20px;
+            }
+
+            .subtitle {
+                font-size: 20px;
+                text-transform: uppercase;
+                font-weight: 800;
+                text-align: center;
+                width: 80%;
+                margin-left: 10%;
+            }
+
+            .tail {
+                font-size: 16px;
+                text-transform: uppercase;
+                text-align: center;
+                padding: 0px 20px;
+                padding-bottom: 20px;
+            }
+
+            table {
+                margin-left: auto;
+                margin-right: auto;
+                width: 100%;
+                table-layout: fixed;
+            }
+
+            td {
+                text-align: center;
+                padding: 0px;
+                color: white;
+            }
+
+            .hairline {
+                width: 80%;
+                height: 0.5px;
+                background-color: white;
+                opacity: 0.4;
+                margin-left: 10%;
+            }
+
+            @media only screen and (min-width: 600px) {
+                .hairline {
+                    width: 100%;
+                    margin-left: 0;
+                }
+            }
+
+            .website {
+                font-size: 10px;
+            }
+
+            .copyright {
+                font-size: 10px;
+                padding-bottom: 32px;
+            }
+
+            a:link,
+            a:visited {
+                color: #3E08A3;
+                background-color: transparent;
+                text-decoration: none;
+            }
+
+            .mockup {
+                width: 70%;
+            }
+
+            .mockups-container {
+                padding-top: 32px;
+            }
+        </style>
+    </head>
+
+    <body class="body"
+          style="background-image: url('https://realmoments.it/assets/background.png');">
+    <div class="wrapper">
+
+
+        <table align="center" class="main" width="100%">
+            <tr>
+                <td>
+                    <img class="logo" src="https://realmoments.it/favicon.ico"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="title" style="padding-top: 32px;">
+                    <div class="gmail-blend-screen">
+                        <div class="gmail-blend-difference">
+                            Hey {{ username }}, nice to meet you!
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="title" style="padding-bottom: 4%; padding-top: 8%;">
+                    <div class="gmail-blend-screen">
+                        <div class="gmail-blend-difference">
+                            Start now sharing your moments and meet amazing people or search for
+                            events near you.
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="mockups-container">
+                    <table>
+                        <td>
+                            <img class="mockup"
+                                 src=" https://realmoments.it/assets/mockups/user.moments.png"/>
+                            <div class="gmail-blend-screen">
+                                <div class="gmail-blend-difference">
+                                    <p class="subtitle">create your moments</p>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>
+                            <img class="mockup"
+                                 src="https://realmoments.it/assets/mockups/events.png"/>
+                            <div class="gmail-blend-screen">
+                                <div class="gmail-blend-difference">
+                                    <p class="subtitle">discover events nearby</p>
+                                </div>
+                            </div>
+                        </td>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="mockups-container">
+                    <table>
+                        <td>
+                            <img class="mockup"
+                                 src="https://realmoments.it/assets/mockups/venues.png"/>
+                            <div class="gmail-blend-screen">
+                                <div class="gmail-blend-difference">
+                                    <p class="subtitle">explore venues nearby</p>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>
+                            <img class="mockup"
+                                 src="https://realmoments.it/assets/mockups/profile.png"/>
+                            <div class="gmail-blend-screen">
+                                <div class="gmail-blend-difference">
+                                    <p class="subtitle">no followers just you</p>
+                                </div>
+                            </div>
+                        </td>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td style="padding: 32px 0;">
+                    <div class="gmail-blend-screen">
+                        <div class="gmail-blend-difference">
+                            <div class="hairline"></div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="tail">
+                    <div class="gmail-blend-screen">
+                        <div class="gmail-blend-difference">
+                            MAKE YOUR LIFE UNFORGETTABLE
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="website" style="padding-bottom: 16px;">
+                    <a href="https://realmoments.it">
+                        www.realmoments.it
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="copyright">
+                    <div class="gmail-blend-screen">
+                        <div class="gmail-blend-difference">
+                            © PIETRO PUTELLI
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    </body>
+
+    </html>
+{% endblock html_body %}
