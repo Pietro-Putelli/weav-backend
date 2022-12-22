@@ -17,7 +17,7 @@ import environ
 env = environ.Env()
 environ.Env.read_env()
 
-DOMAIN = env("DOMAIN")
+DOMAIN = "127.0.0.1"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
@@ -150,7 +150,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [os.environ.get("REDIS_URL", f"redis://{DOMAIN}:6379")],
+            "hosts": [("redis", 6379)],
         },
     },
 }

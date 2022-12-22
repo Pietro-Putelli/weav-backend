@@ -71,7 +71,7 @@ class UserInterest(Services):
     pass
 
 
-def middle_source_url(instance, filename):
+def middle_source_url(_, filename):
     return f"utils/middle/{filename}"
 
 
