@@ -8,7 +8,7 @@
 
 #### There are 4 docker containers:
 
-1. `backend` - The backend server
-2. `postgis/postgis` - The database
+1. `app` - The backend server
+2. `database` - The spatial database postgis/postgis
 3. `redis` - The redis server
 4. `nsfw` - The nsfw server to check image validity
