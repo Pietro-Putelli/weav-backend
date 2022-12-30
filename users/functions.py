@@ -28,7 +28,9 @@ def get_recent_users_list(user):
 def verify_google_ouath_token(token):
     try:
         user_info = id_token.verify_oauth2_token(token, requests.Request(),
-                                                 settings.GOOGLE_CLIENT_ID)
+                                                 settings.GOOGLE_CLIENT_ID,
+                                                 clock_skew_in_seconds=60)
         return user_info
-    except ValueError:
+    except ValueError as error:
+        print(error)
         return None

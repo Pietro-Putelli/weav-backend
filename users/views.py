@@ -65,7 +65,7 @@ class RegisterViewSet(ViewSet):
             serializer = RegistrationWithSerializer(data=user_data)
 
             if serializer.is_valid():
-                user = serializer.save(username, method)
+                user = serializer.save(username)
                 response = LoginSerializer(user.profile).data
 
                 return Response(response, status=HTTP_200_OK)
@@ -146,8 +146,7 @@ class OTPViewSet(ViewSet):
 
     def request(self, request):
         params = request.query_params
-        username = params.get("username")
-        token = send_otp_to_username(username)
+        token = send_otp_to_username(params)
 
         if token is not None:
             return Response({"token_value": token.value}, status=HTTP_200_OK)
@@ -206,6 +205,7 @@ def reset_password(request):
 
 class VerificationViewSet:
     pass
+
 
 # class VerificationViewSet(api.VerificationViewSet):
 #     permission_classes = (AllowAny,)
@@ -271,4 +271,3 @@ def create_user(request):
     UserProfile.objects.create(user=user, name=name)
 
     return Response(status=HTTP_200_OK)
-

@@ -19,7 +19,7 @@ from servicies.date import date_from
 from servicies.utils import cast_to_int
 
 
-@api_view(["POST"])
+@api_view(["POST", "GET"])
 def get_user_moments(request):
     moments = get_user_moments_by(request)
     moments = UserMomentSerializer(moments, many=True)
@@ -76,7 +76,7 @@ class UserMomentAPIView(APIView):
         return Response(status=HTTP_200_OK)
 
 
-@api_view(["POST"])
+@api_view(["POST", "GET"])
 def get_event_moments(request):
     moments = get_event_moments_by(request)
     moments = ShortEventMomentSerializer(moments, many=True)

@@ -37,6 +37,9 @@ class EventMomentManager(models.Manager):
         if slices.count() == 0:
             self.delete_current(business)
 
+    def get_approved(self):
+        return self.get_queryset().filter(business__is_approved=True)
+
 
 class EventMomentSliceManager(models.Manager):
     def get_current_moment_slices(self, moment):

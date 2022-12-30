@@ -11,7 +11,10 @@ def get_otp_code():
     return s.random(length=5)
 
 
-def send_otp_to_username(username):
+def send_otp_to_username(params):
+    username = params.get("username")
+    type = params.get("type")
+
     if username is None:
         return None
 
@@ -19,13 +22,11 @@ def send_otp_to_username(username):
 
     token = TokenCode.objects.update_or_create(username=username)
 
-    username_type = get_username_type(username)
-
-    if username_type == "email":
+    if type == "email":
         TokenVerificationEmail(context={"code": token.code}).send(to=[username])
         return token
 
-    elif username_type == "phone":
+    elif type == "phone":
         service = None  # PhoneVerificationService(phone_number=username)
         try:
             service.send_verification(username, token.code)
