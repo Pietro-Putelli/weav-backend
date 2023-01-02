@@ -37,7 +37,7 @@ def get_user_moments_by(request):
     )
 
     if place_id:
-        queryset = queryset.filter(location__place_id=place_id).order_by("-created_at")
+        queryset = queryset.filter(location__place_id=place_id)
 
     if coordinate:
         queryset = queryset.filter(
@@ -48,7 +48,7 @@ def get_user_moments_by(request):
             distance=GeoDistance("location__coordinate", coordinate)
         ).order_by("distance")
 
-    queryset = queryset.filter(~Q(user__profile__blocked_users__in=[user]))
+    queryset = queryset.filter(~Q(user__profile__blocked_users__in=[user])).order_by("-created_at")
 
     return queryset[offset:up_offset]
 
