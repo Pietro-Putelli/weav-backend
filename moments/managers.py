@@ -11,9 +11,6 @@ class UserMomentManager(models.Manager):
     def get_moments_where_im_tagged(self, user):
         return self.get_today_moments().filter(users_tag__in=[user])
 
-    def get_moments_where_im_tagged_count(self, user):
-        return self.get_moments_where_im_tagged(user).count()
-
 
 class EventMomentManager(models.Manager):
     def _current_moment_queryset(self, business):

@@ -26,4 +26,6 @@ def send_friend_requests_count(sender, instance, created, **kwargs):
         friend = instance.friend
         socket_channel = f"user.{friend.id}"
 
-        send_data_to_socket_channel(socket_channel, SocketActions.USER_FRIEND_REQUEST, None)
+        data = {"id": instance.id}
+
+        send_data_to_socket_channel(socket_channel, SocketActions.USER_FRIEND_REQUEST, data)

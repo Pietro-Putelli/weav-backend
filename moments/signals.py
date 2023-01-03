@@ -23,7 +23,9 @@ def post_save_send_moment_mention(sender, instance, **kwargs):
     if mentioned_users.count() > 0:
         for user in mentioned_users:
             socket_channel = f"user.{user.id}"
-            send_data_to_socket_channel(socket_channel, SocketActions.USER_MENTION_MOMENT, None)
+            data = {"id": instance.id}
+
+            send_data_to_socket_channel(socket_channel, SocketActions.USER_MENTION_MOMENT, data)
 
 
 m2m_changed.connect(post_save_send_moment_mention, sender=UserMoment.users_tag.through)

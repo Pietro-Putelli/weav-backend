@@ -134,3 +134,7 @@ def omit_keys(dictionary, keys):
 def update_for_object(object, data):
     for key, value in data.items():
         setattr(object, key, value)
+
+
+def flatten_list(array):
+    return [x["id"] for x in array]

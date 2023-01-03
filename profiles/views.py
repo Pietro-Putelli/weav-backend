@@ -16,7 +16,7 @@ from profiles.models import UserProfile, UserFriendRequest, UserFriend
 from profiles.serializers import ShortUserProfileSerializer, ShortProfileSerializer, \
     UserChatProfileSerializer, ShortUserProfileChatSerializer, UserFriendRequestSerializer
 from profiles.utils import get_chats_recent, handle_blocked_user
-from servicies.utils import cast_to_int
+from servicies.utils import cast_to_int, flatten_list
 from shared.models import MiddleSource, UserInterest
 from shared.serializers import CreatePhoneSerializer, StaticFeatureSerializer
 from users.models import User
@@ -86,11 +86,13 @@ class ProfileAPIView(AuthenticationMixinAPIView):
 def get_profile_info(request):
     user = request.user
 
-    requests_count = UserFriendRequest.objects.filter(friend=user).count()
-    moments_count = UserMoment.objects.get_moments_where_im_tagged_count(user)
+    requests = UserFriendRequest.objects.filter(friend=user).values("id")
+    moments = UserMoment.objects.get_moments_where_im_tagged(user).values("id")
 
-    return Response({"requests_count": requests_count, "moments_count": moments_count},
-                    status=HTTP_200_OK)
+    requests = flatten_list(requests)
+    moments = flatten_list(moments)
+
+    return Response({"requests": list(requests), "moments": list(moments)}, status=HTTP_200_OK)
 
 
 @api_view(["PUT"])
