@@ -12,7 +12,7 @@ from servicies.caches import cache_instance, get_object_from_cache
 from servicies.choices import LoginChoices
 from users.email import RegistrationEmail, LoginEmail
 from users.functions import verify_google_ouath_token
-from users.models import User, RegistrationToken
+from users.models import User, AccessToken
 from users.serializers import (
     LoginSerializer,
     RegistrationSerializer, RegistrationWithSerializer,
@@ -36,7 +36,7 @@ class RegisterViewSet(ViewSet):
 
             cache_instance(user, RegistrationSerializer, {})
 
-            token = RegistrationToken.objects.create_or_update(email=email)
+            token = AccessToken.objects.create_or_update(email=email)
 
             RegistrationEmail(context={"username": username, "token": token}).send(to=[email])
 
@@ -45,13 +45,15 @@ class RegisterViewSet(ViewSet):
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
     def complete_registration(self, request):
-        token = request.data.get("token")
+        data = request.data
+
+        token = data.get("token")
+        email = data.get("email")
 
         try:
-            registration_token = RegistrationToken.objects.get(value=token)
-            user_email = registration_token.email
+            registration_token = AccessToken.objects.get(value=token, email=email)
 
-            user_data = get_object_from_cache(user_email, delete=True)
+            user_data = get_object_from_cache(email, delete=True)
 
             user = User.objects.create_user(**user_data)
             user = LoginSerializer(user.profile)
@@ -60,7 +62,7 @@ class RegisterViewSet(ViewSet):
 
             return Response(user.data, status=HTTP_200_OK)
 
-        except RegistrationToken.DoesNotExist:
+        except AccessToken.DoesNotExist:
             return Response(status=HTTP_404_NOT_FOUND)
 
     def register_with(self, request):
@@ -93,7 +95,7 @@ class RegisterViewSet(ViewSet):
 
         if user:
             username = user.get("username")
-            token = RegistrationToken.objects.create_or_update(email=email)
+            token = AccessToken.objects.create_or_update(email=email)
 
             RegistrationEmail(context={"username": username, "token": token}).send(to=[email])
 
@@ -117,27 +119,29 @@ class LoginViewSet(ViewSet):
         except User.DoesNotExist:
             return Response(status=HTTP_404_NOT_FOUND)
 
-        token = RegistrationToken.objects.create_or_update(email=user.email)
+        token = AccessToken.objects.create_or_update(email=user.email)
 
         LoginEmail(context={"username": user.username, "token": token}).send(to=[user.email])
 
         return Response(status=HTTP_200_OK)
 
     def complete_login(self, request):
-        token = request.data.get("token")
+        data = request.data
+
+        token = data.get("token")
+        email = data.get("email")
 
         try:
-            registration_token = RegistrationToken.objects.get(value=token)
-            user_email = registration_token.email
+            registration_token = AccessToken.objects.get(value=token, email=email)
 
-            user = User.objects.get(email=user_email)
+            user = User.objects.get(email=email)
             serialized = LoginSerializer(user.profile)
 
             registration_token.delete()
 
             return Response(serialized.data, status=HTTP_200_OK)
 
-        except RegistrationToken.DoesNotExist:
+        except AccessToken.DoesNotExist:
             return Response(status=HTTP_404_NOT_FOUND)
 
     def login_with(self, request):
@@ -166,7 +170,7 @@ class LoginViewSet(ViewSet):
         except User.DoesNotExist:
             return Response(status=HTTP_404_NOT_FOUND)
 
-        token = RegistrationToken.objects.create_or_update(email=user.email)
+        token = AccessToken.objects.create_or_update(email=user.email)
         LoginEmail(context={"username": user.username, "token": token}).send(to=[user.email])
 
         return Response(status=HTTP_200_OK)

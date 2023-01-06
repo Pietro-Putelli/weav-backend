@@ -2,10 +2,9 @@ import secrets
 
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
-from phonenumber_field.modelfields import PhoneNumberField
 
 from core.models import TimestampModel
-from users.managers import UserManager, TokenCodeManager, RegistrationTokenManager
+from users.managers import UserManager, TokenCodeManager, AccessTokenManager
 
 no_blank = {'blank': False, 'null': False}
 
@@ -39,12 +38,15 @@ def upload_qr_code(instance, _):
     return f"qr_codes/{instance.email}.png"
 
 
-class RegistrationToken(models.Model):
+class AccessToken(models.Model):
     email = models.EmailField(**no_blank)
     value = models.CharField(max_length=64, default=generate_token)
     qrcode = models.ImageField(upload_to=upload_qr_code, default=None)
 
-    objects = RegistrationTokenManager()
+    objects = AccessTokenManager()
+
+    class Meta:
+        unique_together = ('email', 'value')
 
     def __str__(self):
         return f"{self.id} • {self.email}"

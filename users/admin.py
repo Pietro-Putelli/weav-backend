@@ -1,5 +1,5 @@
 from django.contrib import admin
-from users.models import User, RegistrationToken
+from users.models import User, AccessToken
 
 admin.site.register(User)
-admin.site.register(RegistrationToken)
+admin.site.register(AccessToken)

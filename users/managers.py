@@ -10,7 +10,7 @@ from django.contrib.auth.models import UserManager as DjangoUserManager
 from users.utils import generate_qrcode
 
 
-class RegistrationTokenManager(models.Manager):
+class AccessTokenManager(models.Manager):
     def create_or_update(self, email):
         token, created = self.get_or_create(email=email)
 
