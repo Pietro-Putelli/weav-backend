@@ -1,24 +1,20 @@
 from django.db.models.query_utils import Q
-# from phone_verify import api
-# from phone_verify.serializers import PhoneSerializer, SMSVerificationSerializer
-# from phone_verify.services import send_security_code_and_generate_session_token
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
-from rest_framework.throttling import UserRateThrottle
 from rest_framework.viewsets import ViewSet
 
 from pp_placehoder.generator import generate_profile_placeholder
 from profiles.models import UserProfile
 from real.throttling import UserLoginRateThrottle
+from servicies.caches import cache_instance, get_object_from_cache
 from servicies.choices import LoginChoices
-from servicies.otp import send_otp_to_username
+from users.email import RegistrationEmail, LoginEmail
 from users.functions import verify_google_ouath_token
-from users.models import TokenCode, User
+from users.models import User, RegistrationToken
 from users.serializers import (
     LoginSerializer,
-    AuthenticationSerializer,
     RegistrationSerializer, RegistrationWithSerializer,
 )
 
@@ -33,21 +29,39 @@ class RegisterViewSet(ViewSet):
         serializer = RegistrationSerializer(data=data)
 
         if serializer.is_valid():
-            name = data.get("name")
-            token_value = data.get("token")
-            code = data.get("code")
+            user = serializer.save()
 
-            try:
-                token = TokenCode.objects.get(value=token_value, code=code)
+            username = user.username
+            email = user.email
 
-                serializer.save(name)
-                token.delete()
+            cache_instance(user, RegistrationSerializer, {})
 
-                return Response(status=HTTP_200_OK)
-            except TokenCode.DoesNotExist:
-                pass
+            token = RegistrationToken.objects.create_or_update(email=email)
 
-        return Response(status=HTTP_400_BAD_REQUEST)
+            RegistrationEmail(context={"username": username, "token": token}).send(to=[email])
+
+            return Response(status=HTTP_200_OK)
+
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+    def complete_registration(self, request):
+        token = request.data.get("token")
+
+        try:
+            registration_token = RegistrationToken.objects.get(value=token)
+            user_email = registration_token.email
+
+            user_data = get_object_from_cache(user_email, delete=True)
+
+            user = User.objects.create_user(**user_data)
+            user = LoginSerializer(user.profile)
+
+            registration_token.delete()
+
+            return Response(user.data, status=HTTP_200_OK)
+
+        except RegistrationToken.DoesNotExist:
+            return Response(status=HTTP_404_NOT_FOUND)
 
     def register_with(self, request):
         data = request.data
@@ -72,29 +86,65 @@ class RegisterViewSet(ViewSet):
 
         return Response(status=HTTP_400_BAD_REQUEST)
 
+    def resend_registration_token(self, request):
+        email = request.data.get("email")
+
+        user = get_object_from_cache(email)
+
+        if user:
+            username = user.get("username")
+            token = RegistrationToken.objects.create_or_update(email=email)
+
+            RegistrationEmail(context={"username": username, "token": token}).send(to=[email])
+
+            return Response(status=HTTP_200_OK)
+
+        return Response(status=HTTP_404_NOT_FOUND)
+
 
 class LoginViewSet(ViewSet):
     permission_classes = (AllowAny,)
     throttle_classes = (UserLoginRateThrottle,)
 
     def login(self, request):
-        serializer = AuthenticationSerializer(data=request.data)
+        data = request.data
 
-        if serializer.is_valid():
-            user = serializer.validated_data
+        email = data.get("email")
+        username = data.get("username")
 
-            response = LoginSerializer(user.profile)
+        try:
+            user = User.objects.get(Q(email=email) | Q(username=username))
+        except User.DoesNotExist:
+            return Response(status=HTTP_404_NOT_FOUND)
 
-            return Response(response.data, status=HTTP_200_OK)
-        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+        token = RegistrationToken.objects.create_or_update(email=user.email)
+
+        LoginEmail(context={"username": user.username, "token": token}).send(to=[user.email])
+
+        return Response(status=HTTP_200_OK)
+
+    def complete_login(self, request):
+        token = request.data.get("token")
+
+        try:
+            registration_token = RegistrationToken.objects.get(value=token)
+            user_email = registration_token.email
+
+            user = User.objects.get(email=user_email)
+            serialized = LoginSerializer(user.profile)
+
+            registration_token.delete()
+
+            return Response(serialized.data, status=HTTP_200_OK)
+
+        except RegistrationToken.DoesNotExist:
+            return Response(status=HTTP_404_NOT_FOUND)
 
     def login_with(self, request):
         data = request.data
-
         token = data.get("token")
 
         response = None
-
         user_data = verify_google_ouath_token(token)
 
         if user_data is not None:
@@ -103,11 +153,23 @@ class LoginViewSet(ViewSet):
 
             if user:
                 response = LoginSerializer(user.profile).data
-
         else:
             return Response(status=HTTP_400_BAD_REQUEST)
-
         return Response(response, status=HTTP_200_OK)
+
+    def resend_login_token(self, request):
+        data = request.data
+        email = data.get("email")
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response(status=HTTP_404_NOT_FOUND)
+
+        token = RegistrationToken.objects.create_or_update(email=user.email)
+        LoginEmail(context={"username": user.username, "token": token}).send(to=[user.email])
+
+        return Response(status=HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -123,119 +185,17 @@ def check_user_existence(request):
     data = request.query_params
 
     email = data.get("email")
-    phone = data.get("phone")
     username = data.get("username")
 
     try:
         if email is not None:
             User.objects.get(email=email)
-        elif phone is not None:
-            User.objects.get(phone=phone)
         else:
             User.objects.get(username=username)
 
         return Response(status=HTTP_200_OK)
     except User.DoesNotExist:
         return Response(status=HTTP_404_NOT_FOUND)
-
-
-# OTP CODE
-
-class OTPViewSet(ViewSet):
-    permission_classes = (AllowAny,)
-
-    def request(self, request):
-        params = request.query_params
-        token = send_otp_to_username(params)
-
-        if token is not None:
-            return Response({"token_value": token.value}, status=HTTP_200_OK)
-        return Response(status=HTTP_400_BAD_REQUEST)
-
-    def resend(self, request):
-        token_value = request.data.get("token_value")
-
-        try:
-            username = TokenCode.objects.get(value=token_value).username
-            send_otp_to_username(username=username)
-
-            return Response(status=HTTP_200_OK)
-        except TokenCode.DoesNotExist:
-            return Response(status=HTTP_404_NOT_FOUND)
-
-    def verify(self, request):
-        data = request.data
-
-        username = data.get("username")
-        token_value = data.get("token")
-        code = data.get("code")
-
-        try:
-            TokenCode.objects.get(
-                username=username, value=token_value, code=code)
-
-            return Response(status=HTTP_200_OK)
-        except TokenCode.DoesNotExist:
-            return Response(status=HTTP_404_NOT_FOUND)
-
-
-@api_view(["POST"])
-@permission_classes([AllowAny])
-def reset_password(request):
-    data = request.data
-    token_value = data.get("token")
-    new_password = data.get("password")
-
-    try:
-        token = TokenCode.objects.get(value=token_value)
-
-        user = User.objects.filter(
-            Q(email=token.username) | Q(phone=token.username)
-        ).first()
-
-        user.set_password(new_password)
-        user.save()
-
-        token.delete()
-
-        return Response(status=HTTP_200_OK)
-    except TokenCode.DoesNotExist:
-        return Response(status=HTTP_404_NOT_FOUND)
-
-
-class VerificationViewSet:
-    pass
-
-
-# class VerificationViewSet(api.VerificationViewSet):
-#     permission_classes = (AllowAny,)
-
-#     @action(
-#         detail=False,
-#         methods=["POST"],
-#         serializer_class=PhoneSerializer,
-#     )
-#     def register(self, request):
-#         serializer = PhoneSerializer(data=request.data)
-#         if serializer.is_valid():
-#             session_token = send_security_code_and_generate_session_token(
-#                 str(serializer.validated_data["phone_number"])
-#             )
-#             return Response({"session_token": session_token}, status=HTTP_200_OK)
-
-#         return Response(status=HTTP_400_BAD_REQUEST)
-
-#     @action(detail=False, methods=["POST"], serializer_class=SMSVerificationSerializer)
-#     def verify(self, request):
-#         serializer = SMSVerificationSerializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-
-#         user_id = request.user.id
-#         phone_number = serializer.validated_data.get("phone_number")
-
-#         User.objects.filter(id=user_id).update(phone=phone_number)
-
-#         return Response(status=HTTP_200_OK)
 
 
 '''

@@ -1,15 +1,20 @@
+import secrets
+
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
 from core.models import TimestampModel
-from users.managers import TokenCodeManager, UserManager
+from users.managers import UserManager, TokenCodeManager, RegistrationTokenManager
+
+no_blank = {'blank': False, 'null': False}
 
 
 class User(AbstractBaseUser, PermissionsMixin, TimestampModel):
     username = models.CharField(max_length=32, unique=True)
-    email = models.EmailField(blank=True, null=True)
-    phone = PhoneNumberField(blank=True, null=True)
+    email = models.EmailField(**no_blank)
+
+    password = models.CharField(blank=True, null=True, max_length=128)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -26,12 +31,28 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampModel):
         return f"{self.id} • {self.username}"
 
 
+def generate_token():
+    return secrets.token_hex()
+
+
+def upload_qr_code(instance, _):
+    return f"qr_codes/{instance.email}.png"
+
+
+class RegistrationToken(models.Model):
+    email = models.EmailField(**no_blank)
+    value = models.CharField(max_length=64, default=generate_token)
+    qrcode = models.ImageField(upload_to=upload_qr_code, default=None)
+
+    objects = RegistrationTokenManager()
+
+    def __str__(self):
+        return f"{self.id} • {self.email}"
+
+
 class TokenCode(models.Model):
-    username = models.CharField(max_length=256)  # phone or email
+    email = models.EmailField(**no_blank)
     value = models.CharField(max_length=64)
     code = models.CharField(max_length=5)
 
     objects = TokenCodeManager()
-
-    def __str__(self):
-        return f"{self.username} • {self.value} • {self.code}"

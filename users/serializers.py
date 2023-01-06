@@ -9,15 +9,16 @@ from rest_framework.serializers import ValidationError
 from profiles.models import UserProfile
 from users.email import WelcomeEmail
 from users.models import User
+from users.utils import UserCache
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
     username = serializers.CharField()
+    name = serializers.CharField()
 
     class Meta:
         model = User
-        fields = ["username", "email", "phone", "password"]
-        extra_kwargs = {"password": {"write_only": True}}
+        fields = ("username", "email", "name")
 
     def validate_username(self, username):
         try:
@@ -33,30 +34,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
         except ObjectDoesNotExist:
             return email
 
-    def validate_phone(self, phone):
-        try:
-            User.objects.get(phone=phone)
-            raise ValidationError("Phone already exists")
-        except ObjectDoesNotExist:
-            return phone
-
-    def save(self, name):
-        email = self.validated_data.get("email")
-        phone = self.validated_data.get("phone")
-        password = self.validated_data.get("password")
-        username = self.validated_data.get("username")
-
-        user = User(email=email, phone=phone, username=username)
-        user.set_password(password)
-        user.save()
-
-        UserProfile.objects.create(user=user, name=name)
-
-        if email is not None:
-            WelcomeEmail(context={"username": username}).send(
-                to=[email])
-
-        return user
+    def save(self):
+        return UserCache(**self.validated_data)
 
 
 class RegistrationWithSerializer(serializers.Serializer):

@@ -1,6 +1,16 @@
 from templated_mail.mail import BaseEmailMessage
 
 
+class RegistrationEmail(BaseEmailMessage):
+    endpoint = 'registration_email'
+    template_name = 'email/registration_email.html'
+
+
+class LoginEmail(BaseEmailMessage):
+    endpoint = 'login_email'
+    template_name = 'email/login_email.html'
+
+
 class WelcomeEmail(BaseEmailMessage):
     endpoint = 'welcome'
     template_name = "email/welcome.html"

@@ -1,9 +1,29 @@
 import uuid
+import secrets
 
 from django.db import models
 
+from profiles.models import UserProfile
 from servicies.otp import get_otp_code
 from django.contrib.auth.models import UserManager as DjangoUserManager
+
+from users.utils import generate_qrcode
+
+
+class RegistrationTokenManager(models.Manager):
+    def create_or_update(self, email):
+        token, created = self.get_or_create(email=email)
+
+        if not created:
+            token_value = secrets.token_hex()
+            token.value = token_value
+            token.qrcode = generate_qrcode(token_value)
+        else:
+            token.qrcode = generate_qrcode(token.value)
+
+        token.save()
+
+        return token
 
 
 class TokenCodeManager(models.Manager):
@@ -34,3 +54,11 @@ class UserManager(DjangoUserManager):
             return self.get_queryset().get(email=email)
         except self.model.DoesNotExist:
             return None
+
+    def create_user(self, **kwargs):
+        name = kwargs.pop('name')
+
+        user = super().create_user(**kwargs)
+        UserProfile.objects.create(user=user, name=name)
+
+        return user
