@@ -101,18 +101,14 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
-    # 'DEFAULT_THROTTLE_CLASSES': [
-    #     'rest_framework.throttling.AnonRateThrottle',
-    #     'rest_framework.throttling.UserRateThrottle',
-    #     'real.throttling.UserLoginRateThrottle',
-    #     'real.throttling.BusinessRateThrottle',
-    # ],
-    # 'DEFAULT_THROTTLE_RATES': {
-    #     'login_attempts': '6/day',
-    #     'anon': '3000/min',
-    #     'user': '3000/min',
-    #     'business': '3000/min'
-    # }
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/min',
+        'user': '100/min',
+    }
 }
 
 # WSGI_APPLICATION = "real.wsgi.application"
