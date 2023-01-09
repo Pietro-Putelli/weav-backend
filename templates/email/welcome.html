@@ -1,279 +1,365 @@
-{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block subject %}
-    {% blocktrans %}Welcome to Real{% endblocktrans %}
-{% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-{% block html_body %}
-    <!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    <html xmlns="http://www.w3.org/1999/xhtml">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            padding-top: 2em;
+            background: #000;
+            font: 1em/1.5 sans-serif;
+            font-family: Raleway, sans-serif;
+        }
 
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        u+.body .gmail-blend-screen {
+            background: #000;
+            mix-blend-mode: screen;
+        }
 
-        <meta name="color-scheme" content="light only">
+        u+.body .gmail-blend-difference {
+            background: #000;
+            mix-blend-mode: difference;
+        }
 
-        <title>Token Verification</title>
+        td {
+            text-align: center;
+            color: white;
+            padding: 6px;
+        }
 
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500&family=Space+Mono&display=swap"
-              rel="stylesheet">
+        p {
+            margin: 0;
+            color: #fff;
+            text-align: center;
+        }
 
-        <style type="text/css">
-            body {
-                margin: 0;
-                font-family: 'Raleway', sans-serif;
-                padding: 32px 0;
-            }
+        table {
+            width: 100%;
+            margin: auto;
+        }
 
-            .gmail-blend-screen {
-                background: #000;
-                mix-blend-mode: screen;
-            }
+        .logo {
+            width: 100px;
+            height: 100px;
+        }
 
-            .gmail-blend-difference {
-                background: #000;
-                mix-blend-mode: difference;
-            }
+        .title {
+            font-size: 4em;
+            font-weight: bold;
+            letter-spacing: 10px;
+        }
 
-            table {
-                border-spacing: 0;
-            }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
 
-            img {
-                border: 0;
-            }
+        a:hover {
+            color: #fff;
+        }
 
-            td {
-                width: 160px;
-                text-align: center;
-                vertical-align: middle;
-                letter-spacing: 5px;
-                color: white;
-            }
+        .sepatatorTitle {
+            display: inline-block;
+            text-transform: uppercase;
+            font-size: 0.8em;
+            font-weight: 500;
+            letter-spacing: 3px;
+        }
 
-            .wrapper {
-                width: 100%;
-                table-layout: fixed;
-                padding-top: 32px;
-            }
+        .hairlineContainer {
+            display: inline-block;
+        }
 
-            .main {
-                margin: 0, auto;
-                width: 100%;
-                max-width: 600px;
-                border-spacing: 0px;
-            }
+        hr {
+            border: none;
+            background-color: white;
+            opacity: 0.5;
+            height: 0.5px;
+            width: 8em;
+        }
 
-            .logo {
-                width: 30%;
-            }
+        .copyright {
+            color: #fff;
+            text-align: center;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 500;
+            font-size: 0.6em;
+        }
 
-            .title {
-                font-size: 20px;
-            }
+        .tagline {
+            letter-spacing: 5px;
+        }
 
-            .subtitle {
-                font-size: 20px;
-                text-transform: uppercase;
-                font-weight: 800;
-                text-align: center;
-                width: 80%;
-                margin-left: 10%;
-            }
+        .taglineContainer {
+            padding: 1em 2em;
+            border-radius: 1em;
+            display: inline-block;
+            transform: rotate(-1deg);
+            background-image: linear-gradient(#3E08A3, #3E08A3);
+        }
 
-            .tail {
-                font-size: 16px;
-                text-transform: uppercase;
-                text-align: center;
-                padding: 0px 20px;
-                padding-bottom: 20px;
-            }
+        .socialIconContainer {
+            display: inline-flex;
+            padding: 1em;
+            margin: 0em 0.4em;
+            background-image: linear-gradient(#110D21, #110D21);
+            border-radius: 1.5em;
+        }
 
-            table {
-                margin-left: auto;
-                margin-right: auto;
-                width: 100%;
-                table-layout: fixed;
-            }
+        .socialIconsContainer {
+            padding-top: 2em;
+        }
 
-            td {
-                text-align: center;
-                padding: 0px;
-                color: white;
-            }
+        .socialIconImg {
+            width: 1.5em;
+            height: 1.5em;
+        }
 
-            .hairline {
-                width: 80%;
-                height: 0.5px;
+        .footer {
+            padding-top: 1em;
+            padding-bottom: 1em;
+            background-image: linear-gradient(#110D21, #110D21);
+        }
+
+        .website {
+            color: #fff;
+            letter-spacing: 4px;
+            font-weight: bold;
+            font-size: 1.6em;
+            text-decoration: underline;
+        }
+
+        .taglineImg {
+            width: 95%;
+        }
+
+        .mockupContainer {
+            display: inline-block;
+        }
+
+        .mockupContent {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .mockupImg {
+            width: 20em;
+            margin: 0px 1em;
+        }
+
+        .row {
+            width: 100%;
+            text-align: center;
+        }
+
+        .mockupCaption {
+            font: 400 1em sans-serif;
+            color: #fff;
+            text-align: center;
+            letter-spacing: 2px;
+            width: 80%;
+            margin-top: 2em;
+        }
+
+        .description {
+            font-size: 1em;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            margin: 0 2em;
+        }
+
+        .welcomeTitle {
+            font-size: 1.2em;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+        }
+
+        /* create media for mobile device only hr */
+        @media only screen and (max-width: 600px) {
+            hr {
+                width: 4em;
+                border: none;
                 background-color: white;
-                opacity: 0.4;
-                margin-left: 10%;
+                height: 0.5px;
             }
 
-            @media only screen and (min-width: 600px) {
-                .hairline {
-                    width: 100%;
-                    margin-left: 0;
-                }
-            }
-
-            .website {
-                font-size: 10px;
+            .qrcode {
+                width: 6em;
+                height: 6em;
+                padding: 1.5em;
             }
 
             .copyright {
-                font-size: 10px;
-                padding-bottom: 32px;
+                font: 400 0.5em sans-serif;
             }
 
-            a:link,
-            a:visited {
-                color: #3E08A3;
-                background-color: transparent;
-                text-decoration: none;
+            .socialIconContainer {
+                margin: 0em 0.2em;
+                padding: 0.8em;
+                border-radius: 1.2em;
             }
 
-            .mockup {
-                width: 70%;
+            .socialIconImg {
+                width: 1em;
+                height: 1em;
             }
 
-            .mockups-container {
-                padding-top: 32px;
+            .mockupImg {
+                width: 10em;
+                margin: 0px 0.5em;
             }
-        </style>
-    </head>
+        }
 
-    <body class="body"
-          style="background-image: url('https://realmoments.it/assets/background.png');">
-    <div class="wrapper">
+        @media screen and (min-width: 768px) {
+            .taglineImg {
+                width: 50em;
+            }
 
+            .description {
+                width: 25em;
+                font-size: 2em;
+                text-align: center;
+                display: inline-block;
+            }
 
-        <table align="center" class="main" width="100%">
-            <tr>
-                <td>
-                    <img class="logo" src="https://realmoments.it/favicon.ico"/>
-                </td>
-            </tr>
+            .welcomeTitle {
+                font-size: 2em;
+            }
+        }
 
-            <tr>
-                <td class="title" style="padding-top: 32px;">
+        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@500;600;700&family=Roboto:wght@300&display=swap');
+    </style>
+</head>
+
+<body class="body" style="background-image: url('https://realmoments.it/assets/background.png');">
+    <table border="0" cellpadding="0" cellspacing="0" role="presentation">
+        <tr>
+            <td>
+                <img src="https://realmoments.it/assets/logo.png" alt="logo" class="logo" />
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <div class="gmail-blend-screen">
+                    <div class="gmail-blend-difference">
+                        <p class="title">WEAV</p>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <img class="taglineImg" src="https://realmoments.it/assets/tagline.png" alt="logo" />
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding: 1.5em 0;">
+                <div class="gmail-blend-screen">
+                    <div class="gmail-blend-difference">
+                        <p class="welcomeTitle">Hey pietro_putelli, welcome to Weav!</p>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <div class="row">
+                    <div class="mockupContainer">
+                        <img class="mockupImg" src="https://realmoments.it/assets/mockups/user.moments.png" />
+                    </div>
+
+                    <div class="mockupContainer">
+                        <img class="mockupImg" src="https://realmoments.it/assets/mockups/events.png" />
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding: 1em 0;">
+                <div class="gmail-blend-screen">
+                    <div class="gmail-blend-difference">
+                        <p class="description">Share moments to meet new people nearby and search for events in your
+                            city</p>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr style="text-align: center;">
+            <td class="hairlineContainer">
+                <div class="gmail-blend-screen">
+                    <div class="gmail-blend-difference">
+                        <hr />
+                    </div>
+                </div>
+            </td>
+
+            <td class="sepatatorTitle">
+                <div class="gmail-blend-screen">
+                    <div class="gmail-blend-difference">
+                        discover more on
+                    </div>
+                </div>
+            </td>
+
+            <td class="hairlineContainer">
+                <div class="gmail-blend-screen">
+                    <div class="gmail-blend-difference">
+                        <hr />
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding-top: 2em">
+                <div class="gmail-blend-screen">
+                    <div class="gmail-blend-difference">
+                        <a href="https://www.google.com" class="website">WEAV.COM</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="socialIconsContainer">
+                <a class="socialIconContainer" href="https://www.google.com/">
+                    <img src="https://realmoments.it/assets/icons/instagram.png" alt="qrcode" class="socialIconImg" />
+                </a>
+                <a class="socialIconContainer" href="https://www.google.com/">
+                    <img src="https://realmoments.it/assets/icons/tiktok.png" alt="qrcode" class="socialIconImg" />
+                </a>
+                <a class="socialIconContainer" href="https://www.google.com/">
+                    <img src="https://realmoments.it/assets/icons/link.png" alt="qrcode" class="socialIconImg" />
+                </a>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding-top: 1em;">
+                <div class="footer">
                     <div class="gmail-blend-screen">
                         <div class="gmail-blend-difference">
-                            Hey {{ username }}, nice to meet you!
+                            <p class="copyright">Copyright © 2023 Weav</p>
+                            <p class="copyright">All rights reserved</p>
                         </div>
                     </div>
-                </td>
-            </tr>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
 
-            <tr>
-                <td class="title" style="padding-bottom: 4%; padding-top: 8%;">
-                    <div class="gmail-blend-screen">
-                        <div class="gmail-blend-difference">
-                            Start now sharing your moments and meet amazing people or search for
-                            events near you.
-                        </div>
-                    </div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="mockups-container">
-                    <table>
-                        <td>
-                            <img class="mockup"
-                                 src=" https://realmoments.it/assets/mockups/user.moments.png"/>
-                            <div class="gmail-blend-screen">
-                                <div class="gmail-blend-difference">
-                                    <p class="subtitle">create your moments</p>
-                                </div>
-                            </div>
-                        </td>
-
-                        <td>
-                            <img class="mockup"
-                                 src="https://realmoments.it/assets/mockups/events.png"/>
-                            <div class="gmail-blend-screen">
-                                <div class="gmail-blend-difference">
-                                    <p class="subtitle">discover events nearby</p>
-                                </div>
-                            </div>
-                        </td>
-                    </table>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="mockups-container">
-                    <table>
-                        <td>
-                            <img class="mockup"
-                                 src="https://realmoments.it/assets/mockups/venues.png"/>
-                            <div class="gmail-blend-screen">
-                                <div class="gmail-blend-difference">
-                                    <p class="subtitle">explore venues nearby</p>
-                                </div>
-                            </div>
-                        </td>
-
-                        <td>
-                            <img class="mockup"
-                                 src="https://realmoments.it/assets/mockups/profile.png"/>
-                            <div class="gmail-blend-screen">
-                                <div class="gmail-blend-difference">
-                                    <p class="subtitle">no followers just you</p>
-                                </div>
-                            </div>
-                        </td>
-                    </table>
-                </td>
-            </tr>
-
-            <tr>
-                <td style="padding: 32px 0;">
-                    <div class="gmail-blend-screen">
-                        <div class="gmail-blend-difference">
-                            <div class="hairline"></div>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="tail">
-                    <div class="gmail-blend-screen">
-                        <div class="gmail-blend-difference">
-                            MAKE YOUR LIFE UNFORGETTABLE
-                        </div>
-                    </div>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="website" style="padding-bottom: 16px;">
-                    <a href="https://realmoments.it">
-                        www.realmoments.it
-                    </a>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="copyright">
-                    <div class="gmail-blend-screen">
-                        <div class="gmail-blend-difference">
-                            © PIETRO PUTELLI
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
-    </body>
-
-    </html>
-{% endblock html_body %}
+</html>

@@ -51,7 +51,9 @@ INSTALLED_APPS = [
     "leaflet",
     "channels",
     "django_cleanup.apps.CleanupConfig",
+
     # My Apps
+
     "users.apps.UsersConfig",
     "profiles.apps.ProfilesConfig",
     "business.apps.BusinessConfig",

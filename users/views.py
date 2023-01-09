@@ -30,15 +30,13 @@ class RegisterViewSet(ViewSet):
 
         if serializer.is_valid():
             user = serializer.save()
-
-            username = user.username
             email = user.email
 
             cache_instance(user, RegistrationSerializer, {})
 
             token = AccessToken.objects.create_or_update(email=email)
 
-            RegistrationEmail(context={"username": username, "token": token}).send(to=[email])
+            RegistrationEmail(context={"token": token.value}).send(to=[email])
 
             return Response(status=HTTP_200_OK)
 
@@ -94,10 +92,9 @@ class RegisterViewSet(ViewSet):
         user = get_object_from_cache(email)
 
         if user:
-            username = user.get("username")
             token = AccessToken.objects.create_or_update(email=email)
 
-            RegistrationEmail(context={"username": username, "token": token}).send(to=[email])
+            RegistrationEmail(context={"token": token.value}).send(to=[email])
 
             return Response(status=HTTP_200_OK)
 
@@ -121,7 +118,7 @@ class LoginViewSet(ViewSet):
 
         token = AccessToken.objects.create_or_update(email=user.email)
 
-        LoginEmail(context={"username": user.username, "token": token}).send(to=[user.email])
+        LoginEmail(context={"token": token.value}).send(to=[user.email])
 
         return Response(status=HTTP_200_OK)
 
@@ -171,7 +168,7 @@ class LoginViewSet(ViewSet):
             return Response(status=HTTP_404_NOT_FOUND)
 
         token = AccessToken.objects.create_or_update(email=user.email)
-        LoginEmail(context={"username": user.username, "token": token}).send(to=[user.email])
+        LoginEmail(context={"token": token.value}).send(to=[user.email])
 
         return Response(status=HTTP_200_OK)
 

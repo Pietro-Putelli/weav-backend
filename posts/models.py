@@ -2,7 +2,6 @@ from django.db import models
 from django.db.models import CASCADE
 from core.models import TimestampModel
 from core.fields import UniqueNameFileField
-from servicies.choices import SourceChoices
 
 text_params = {"blank": True, "null": True}
 
@@ -50,8 +49,6 @@ class PostSlice(TimestampModel):
 
     title = models.CharField(max_length=32, **text_params)
     content = models.CharField(max_length=256, **text_params)
-    source_type = models.CharField(choices=SourceChoices.choices, max_length=8,
-                                   default=SourceChoices.PHOTO)
 
 
 class UserPost(Post):

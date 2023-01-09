@@ -1,9 +1,7 @@
 import shortuuid
 
-# from phone_verify.services import PhoneVerificationService
 
-from core.stringvalidators import get_username_type
-from users.email import TokenVerificationEmail
+# from phone_verify.services import PhoneVerificationService
 
 
 def get_otp_code():
