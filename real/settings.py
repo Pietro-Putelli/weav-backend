@@ -54,6 +54,7 @@ INSTALLED_APPS = [
 
     # My Apps
 
+    "throttling.apps.ThrottlingConfig",
     "users.apps.UsersConfig",
     "profiles.apps.ProfilesConfig",
     "business.apps.BusinessConfig",
@@ -105,12 +106,14 @@ REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '100/min',
-        'user': '100/min',
-    }
+        'anon': '100/day',
+        "user": "1000/day",
+        "unauthenticated_user": "5/min",
+        "business": "1000/day"
+    },
 }
 
 # WSGI_APPLICATION = "real.wsgi.application"
@@ -131,7 +134,10 @@ DATABASES = {
         "PASSWORD": env("DATABASE_PASSWORD"),
         "HOST": env("DATABASE_HOST"),
         "PORT": env("DATABASE_PORT"),
-    }
+        'TEST': {
+            'NAME': 'test',
+        },
+    },
 }
 
 AUTH_USER_MODEL = "users.User"

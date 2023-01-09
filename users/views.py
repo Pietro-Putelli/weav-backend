@@ -1,15 +1,16 @@
 from django.db.models.query_utils import Q
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
+from rest_framework.throttling import AnonRateThrottle, ScopedRateThrottle
 from rest_framework.viewsets import ViewSet
 
 from pp_placehoder.generator import generate_profile_placeholder
 from profiles.models import UserProfile
-from real.throttling import UserLoginRateThrottle
 from servicies.caches import cache_instance, get_object_from_cache
 from servicies.choices import LoginChoices
+from throttling.throttlers import UnAuthenticatedThrottle
 from users.email import RegistrationEmail, LoginEmail
 from users.functions import verify_google_ouath_token
 from users.models import User, AccessToken
@@ -21,7 +22,7 @@ from users.serializers import (
 
 class RegisterViewSet(ViewSet):
     permission_classes = (AllowAny,)
-    throttle_classes = (UserLoginRateThrottle,)
+    throttle_classes = (UnAuthenticatedThrottle,)
 
     def register(self, request):
         data = request.data
@@ -103,7 +104,7 @@ class RegisterViewSet(ViewSet):
 
 class LoginViewSet(ViewSet):
     permission_classes = (AllowAny,)
-    throttle_classes = (UserLoginRateThrottle,)
+    throttle_classes = (UnAuthenticatedThrottle,)
 
     def login(self, request):
         data = request.data

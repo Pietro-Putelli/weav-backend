@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 
 from business.models import BusinessToken
 from core.decorators import composed
-from real.throttling import BusinessRateThrottle
+from throttling.throttlers import BusinessRateThrottle
 
 
 class BusinessOwnerAuthentication(authentication.BaseAuthentication):
@@ -19,6 +19,8 @@ class BusinessOwnerAuthentication(authentication.BaseAuthentication):
         try:
             token = BusinessToken.objects.get(key=token_key)
             business = token.business
+
+            request.user = None
             request.business = business
 
         except BusinessToken.DoesNotExist:
@@ -33,6 +35,8 @@ class BusinessOwnerPermission(permissions.BasePermission):
 
         if raw_token is None:
             return False
+
+        request.user = None
 
         token_key = raw_token.replace("Token ", "")
         return BusinessToken.objects.filter(key=token_key).exists()
