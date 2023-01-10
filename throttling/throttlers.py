@@ -2,12 +2,12 @@ from rest_framework.throttling import SimpleRateThrottle, UserRateThrottle
 
 
 class UnAuthenticatedThrottle(SimpleRateThrottle):
-    scope = 'unauthenticated_user'
+    scope = "unauthenticated_user"
 
     def get_cache_key(self, request, view):
         return self.cache_format % {
-            'scope': self.scope,
-            'ident': self.get_ident(request)
+            "scope": self.scope,
+            "ident": self.get_ident(request),
         }
 
 
@@ -16,16 +16,12 @@ class BusinessRateThrottle(SimpleRateThrottle):
 
     def get_cache_key(self, request, view):
         user = request.user
-        business = request.business
 
         if user is not None and user.is_authenticated:
             ident = request.user.pk
-        elif business is not None:
+        elif hasattr(request, "business"):
             ident = request.business.pk
         else:
             ident = self.get_ident(request)
 
-        return self.cache_format % {
-            'scope': self.scope,
-            'ident': ident
-        }
+        return self.cache_format % {"scope": self.scope, "ident": ident}
