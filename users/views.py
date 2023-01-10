@@ -1,10 +1,8 @@
-import json
 from django.db.models.query_utils import Q
-from rest_framework.decorators import api_view, permission_classes, throttle_classes
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
-from rest_framework.throttling import AnonRateThrottle, ScopedRateThrottle
 from rest_framework.viewsets import ViewSet
 
 from pp_placehoder.generator import generate_profile_placeholder
@@ -222,13 +220,14 @@ def send_test_email(request):
 def create_user(request):
     data = request.data
 
-    name = data.get("name")
-    email = data.get("email")
     username = data.get("username")
-    public_key = data.get("public_key")
+    email = data.get("email")
+    password = data.get("password")
+    name = data.get("name")
 
-    user=User.objects.create_user(username=username, email=email,name=name)
-    user.profile.public_key = public_key
-    user.profile.save()
+    user = User.objects.create_user(username=username, email=email)
+    user.set_password(password)
+
+    UserProfile.objects.create(user=user, name=name)
 
     return Response(status=HTTP_200_OK)

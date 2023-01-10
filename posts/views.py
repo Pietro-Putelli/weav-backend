@@ -7,7 +7,7 @@ from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_404_NO
     HTTP_406_NOT_ACCEPTABLE
 from rest_framework.views import APIView
 
-from business.authentication import BusinessOwnerAuthentication, BusinessOwnerPermission
+from business.authentication import BusinessAuthenticationAPIView
 from business.models import Business
 from core.authentication import AuthenticationMixinAPIView
 from core.querylimits import QueryLimits
@@ -144,10 +144,8 @@ class UserPostAPIView(PostAPIView, AuthenticationMixinAPIView):
         return Response(status=HTTP_200_OK)
 
 
-class BusinessPostAPIView(PostAPIView):
-    authentication_classes = (BusinessOwnerAuthentication,)
-    permission_classes = (BusinessOwnerPermission,)
 
+class BusinessPostAPIView(PostAPIView, BusinessAuthenticationAPIView):
     def get(self, request):
         params = request.query_params
 
