@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            padding-top: 2em;
+            background: #000;
+            font: 1em/1.5 sans-serif;
+            font-family: Raleway, sans-serif;
+        }
+
+        u+.body .gmail-blend-screen {
+            background: #000;
+            mix-blend-mode: screen;
+        }
+
+        u+.body .gmail-blend-difference {
+            background: #000;
+            mix-blend-mode: difference;
+        }
+
+        td {
+            text-align: center;
+            color: white;
+            padding: 6px;
+        }
+
+        p {
+            margin: 0;
+            color: #fff;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            margin: auto;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+        }
+
+        .title {
+            font-size: 4em;
+            font-weight: bold;
+            letter-spacing: 10px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        a:hover {
+            color: #fff;
+        }
+
+        .sepatatorTitle {
+            display: inline-block;
+            text-transform: uppercase;
+            font-size: 0.8em;
+            font-weight: 500;
+            letter-spacing: 3px;
+        }
+
+        .hairlineContainer {
+            display: inline-block;
+        }
+
+        hr {
+            border: none;
+            background-color: white;
+            opacity: 0.5;
+            height: 0.5px;
+            width: 8em;
+        }
+
+        .copyright {
+            color: #fff;
+            text-align: center;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 500;
+            font-size: 0.6em;
+        }
+
+        .tagline {
+            letter-spacing: 5px;
+        }
+
+        .taglineContainer {
+            padding: 1em 2em;
+            border-radius: 1em;
+            display: inline-block;
+            transform: rotate(-1deg);
+            background-image: linear-gradient(#3E08A3, #3E08A3);
+        }
+
+        .socialIconContainer {
+            display: inline-flex;
+            padding: 1em;
+            margin: 0em 0.4em;
+            background-image: linear-gradient(#110D21, #110D21);
+            border-radius: 1.5em;
+        }
+
+        .socialIconsContainer {
+            padding-top: 2em;
+        }
+
+        .socialIconImg {
+            width: 1.5em;
+            height: 1.5em;
+        }
+
+        .footer {
+            padding-top: 1em;
+            padding-bottom: 1em;
+            background-image: linear-gradient(#110D21, #110D21);
+        }
+
+        .website {
+            color: #fff;
+            letter-spacing: 4px;
+            font-weight: bold;
+            font-size: 1.6em;
+            text-decoration: underline;
+        }
+
+        .taglineImg {
+            width: 95%;
+        }
+
+        .mockupContainer {
+            display: inline-block;
+        }
+
+        .mockupContent {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .mockupImg {
+            width: 20em;
+            margin: 0px 1em;
+        }
+
+        .row {
+            width: 100%;
+            text-align: center;
+        }
+
+        .mockupCaption {
+            font: 400 1em sans-serif;
+            color: #fff;
+            text-align: center;
+            letter-spacing: 2px;
+            width: 80%;
+            margin-top: 2em;
+        }
+
+        .description {
+            font-size: 1em;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            margin: 0 2em;
+        }
+
+        .welcomeTitle {
+            font-size: 1.2em;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+        }
+
+        /* create media for mobile device only hr */
+        @media only screen and (max-width: 600px) {
+            hr {
+                width: 4em;
+                border: none;
+                background-color: white;
+                height: 0.5px;
+            }
+
+            .qrcode {
+                width: 6em;
+                height: 6em;
+                padding: 1.5em;
+            }
+
+            .copyright {
+                font: 400 0.5em sans-serif;
+            }
+
+            .socialIconContainer {
+                margin: 0em 0.2em;
+                padding: 0.8em;
+                border-radius: 1.2em;
+            }
+
+            .socialIconImg {
+                width: 1em;
+                height: 1em;
+            }
+
+            .mockupImg {
+                width: 10em;
+                margin: 0px 0.5em;
+            }
+        }
+
+        @media screen and (min-width: 768px) {
+            .taglineImg {
+                width: 50em;
+            }
+
+            .description {
+                width: 25em;
+                font-size: 2em;
+                text-align: center;
+                display: inline-block;
+            }
+
+            .welcomeTitle {
+                font-size: 2em;
+            }
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@500;600;700&family=Roboto:wght@300&display=swap');
+    </style>
+</head>
+
+<body class="body" style="background-image: url('https://realmoments.it/assets/background.png');">
+    <table border="0" cellpadding="0" cellspacing="0" role="presentation">
+        <tr>
+            <td>
+                <img src="https://realmoments.it/assets/logo.png" alt="logo" class="logo" />
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <div class="gmail-blend-screen">
+                    <div class="gmail-blend-difference">
+                        <p class="title">WEAV</p>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <img class="taglineImg" src="https://realmoments.it/assets/tagline.png" alt="logo" />
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding: 1.5em 0;">
+                <div class="gmail-blend-screen">
+                    <div class="gmail-blend-difference">
+                        <p class="welcomeTitle">Hey pietro_putelli, welcome to Weav!</p>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <div class="row">
+                    <div class="mockupContainer">
+                        <img class="mockupImg" src="https://realmoments.it/assets/mockups/user.moments.png" />
+                    </div>
+
+                    <div class="mockupContainer">
+                        <img class="mockupImg" src="https://realmoments.it/assets/mockups/events.png" />
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding: 1em 0;">
+                <div class="gmail-blend-screen">
+                    <div class="gmail-blend-difference">
+                        <p class="description">Share moments to meet new people nearby and search for events in your
+                            city</p>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr style="text-align: center;">
+            <td class="hairlineContainer">
+                <div class="gmail-blend-screen">
+                    <div class="gmail-blend-difference">
+                        <hr />
+                    </div>
+                </div>
+            </td>
+
+            <td class="sepatatorTitle">
+                <div class="gmail-blend-screen">
+                    <div class="gmail-blend-difference">
+                        discover more on
+                    </div>
+                </div>
+            </td>
+
+            <td class="hairlineContainer">
+                <div class="gmail-blend-screen">
+                    <div class="gmail-blend-difference">
+                        <hr />
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding-top: 2em">
+                <div class="gmail-blend-screen">
+                    <div class="gmail-blend-difference">
+                        <a href="https://www.google.com" class="website">WEAV.COM</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="socialIconsContainer">
+                <a class="socialIconContainer" href="https://www.google.com/">
+                    <img src="https://realmoments.it/assets/icons/instagram.png" alt="qrcode" class="socialIconImg" />
+                </a>
+                <a class="socialIconContainer" href="https://www.google.com/">
+                    <img src="https://realmoments.it/assets/icons/tiktok.png" alt="qrcode" class="socialIconImg" />
+                </a>
+                <a class="socialIconContainer" href="https://www.google.com/">
+                    <img src="https://realmoments.it/assets/icons/link.png" alt="qrcode" class="socialIconImg" />
+                </a>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding-top: 1em;">
+                <div class="footer">
+                    <div class="gmail-blend-screen">
+                        <div class="gmail-blend-difference">
+                            <p class="copyright">Copyright © 2023 Weav</p>
+                            <p class="copyright">All rights reserved</p>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>
