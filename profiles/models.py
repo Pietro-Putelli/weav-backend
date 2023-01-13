@@ -1,6 +1,6 @@
 from django.db import models
 
-from core.fields import UniqueNameFileField
+from core.fields import UniqueNameFileField, ShortUUIDField
 from core.models import TimestampModel
 from profiles.managers import UserProfileManager, UserFriendManager, UserFriendRequestManager
 
@@ -54,6 +54,9 @@ class UserProfile(models.Model):
 
     # Latest user place id, to know its latest position
     latest_place_id = models.CharField(max_length=64, **allow_blank)
+
+    # Device token used to send push notifications
+    device_token = models.CharField(max_length=255, editable=False, **allow_blank)
 
     objects = UserProfileManager()
 

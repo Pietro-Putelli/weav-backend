@@ -3,6 +3,7 @@ from itertools import chain
 from core.querylimits import QueryLimits
 from discussions.models import EventDiscussion
 from discussions.serializers import EventDiscussionSerializer
+from profiles.models import UserProfile
 from users.models import User
 from .models import BusinessChat, Chat, ChatMessage
 from .serializers import BusinessChatSerializer, ChatSerializer
@@ -56,7 +57,7 @@ def get_business_chats(business, offset):
 
 
 def share_profile(profile_id, users, my_user):
-    user_profile = User.objects.get(id=profile_id)
+    user_profile = User.objects.get(uuid=profile_id)
 
     chats = []
 

@@ -76,7 +76,7 @@ def update_event_moment(business, data, sources):
 def get_event_participants(event_id, user, offset, limit):
     from .serializers import EventParticipantSerializer
     try:
-        event = EventMoment.objects.get(id=event_id)
+        event = EventMoment.objects.get(uuid=event_id)
     except EventMoment.DoesNotExist:
         return None
 

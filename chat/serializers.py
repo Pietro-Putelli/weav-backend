@@ -16,7 +16,7 @@ MESSAGE_SERIALIZER_FIELDS = (
 
 
 class MessageSerializer(serializers.Serializer):
-    id = serializers.SerializerMethodField()
+    id = serializers.IntegerField()
     created_at = serializers.CharField()
     content = serializers.CharField()
     seen = serializers.BooleanField()
@@ -29,9 +29,6 @@ class MessageSerializer(serializers.Serializer):
     business_profile = ShortBusinessSerializer()
 
     reaction = serializers.SerializerMethodField()
-
-    def get_id(self, instance):
-        return f"message.{instance.id}"
 
     def get_reply(self, instance):
         if instance.reply is not None:
@@ -67,23 +64,20 @@ class ChatMessageSerializer(MessageSerializer):
         model = ChatMessage
         fields = ("sender", "receiver")
 
-    def get_sender(self, instance):
-        return instance.sender.id
+    def get_sender(self, chat):
+        return chat.sender.uuid
 
-    def get_receiver(self, instance):
-        return instance.receiver.id
+    def get_receiver(self, chat):
+        return chat.receiver.uuid
 
 
 class ChatSerializer(serializers.Serializer):
-    id = serializers.SerializerMethodField()
+    id = serializers.IntegerField()
     receiver = serializers.SerializerMethodField()
     messages = serializers.SerializerMethodField()
     unread_count = serializers.SerializerMethodField()
     muted = serializers.SerializerMethodField()
     is_active = serializers.BooleanField()
-
-    def get_id(self, instance):
-        return f"chat.{instance.id}"
 
     def get_receiver(self, chat):
         user = self.context.get("user")
@@ -103,9 +97,7 @@ class ChatSerializer(serializers.Serializer):
 
     def get_unread_count(self, instance):
         user = self.context.get("user")
-        return ChatMessage.objects.filter(
-            chat=instance, receiver=user.id, seen=False
-        ).count()
+        return ChatMessage.objects.filter(chat=instance, receiver=user, seen=False).count()
 
     def get_muted(self, instance):
         user = self.context.get("user")
@@ -113,28 +105,18 @@ class ChatSerializer(serializers.Serializer):
 
 
 class BusinessChatMessageSerializer(serializers.Serializer):
-    id = serializers.SerializerMethodField()
+    id = serializers.IntegerField()
     created_at = serializers.CharField()
     content = serializers.CharField()
     seen = serializers.BooleanField()
-    reply = serializers.SerializerMethodField()
-
     is_user = serializers.SerializerMethodField()
-
-    def get_id(self, instance):
-        return f"message.{instance.id}"
-
-    def get_reply(self, instance):
-        if instance.reply is not None:
-            return BusinessChatMessageSerializer(instance.reply).data
-        return None
 
     def get_is_user(self, instance):
         return instance.user is None
 
 
 class BusinessChatSerializer(serializers.Serializer):
-    id = serializers.SerializerMethodField()
+    id = serializers.IntegerField()
     user = serializers.SerializerMethodField()
     business = serializers.SerializerMethodField()
     messages = serializers.SerializerMethodField()
@@ -143,9 +125,6 @@ class BusinessChatSerializer(serializers.Serializer):
     # Used to know who wants to retrieve the chats, user or business.
     def is_user(self):
         return self.context.get("is_user") is True
-
-    def get_id(self, instance):
-        return f"business.chat.{instance.id}"
 
     def get_user(self, instance):
         if self.is_user():

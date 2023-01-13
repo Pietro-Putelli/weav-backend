@@ -85,10 +85,10 @@ def get_businesses(request):
 # Need to use POST method because of COORDINATE to get user's distance from BUSINESS.
 @api_view(["POST", "GET"])
 def get_business_by_id(request):
-    business_id = (request.data or request.query_params).get("business_id")
+    uuid = (request.data or request.query_params).get("id")
 
     try:
-        business = Business.objects.get(id=business_id)
+        business = Business.objects.get(uuid=uuid)
     except Business.DoesNotExist:
         return Response(status=HTTP_404_NOT_FOUND)
 
@@ -152,10 +152,10 @@ def get_my_business_data(request):
 class BusinessLikeAPIView(APIView):
     def put(self, request):
         data = request.data
-        id = data.get("id")
+        business_id = data.get("id")
 
         try:
-            business = Business.objects.get(id=id)
+            business = Business.objects.get(uuid=business_id)
             likes = business.likes
 
             user = request.user
@@ -193,8 +193,8 @@ class BusinessLikeAPIView(APIView):
 @api_view(["GET"])
 def get_business_current_moment(request):
     try:
-        business_id = request.query_params.get("business_id")
-        business = Business.objects.get(id=business_id)
+        uuid = request.query_params.get("id")
+        business = Business.objects.get(uuid=uuid)
 
         moment = EventMoment.objects.filter(business=business).first()
         moment = ShortEventMomentSerializer(moment)

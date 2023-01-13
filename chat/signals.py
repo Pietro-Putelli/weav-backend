@@ -10,7 +10,7 @@ from .models import BusinessChatMessage, ChatMessage
 @receiver(post_save, sender=ChatMessage)
 def send_user_chat(instance, created, **_):
     if created:
-        channel_name = f"user.{instance.receiver.id}"
+        channel_name = f"user.{instance.receiver.uuid}"
 
         chat = ChatSerializer(instance.chat, context={
             "user": instance.receiver}).data
@@ -26,10 +26,10 @@ def send_business_chat(instance, created, **_):
         chat = instance.chat
 
         if is_receiver_user:
-            channel_name = f"user.{chat.user.id}"
+            channel_name = f"user.{chat.user.uuid}"
         else:
             business = chat.business
-            channel_name = f"business.{business.id}"
+            channel_name = f"business.{business.uuid}"
 
         chat = BusinessChatSerializer(
             chat, context={"is_user": is_receiver_user}).data

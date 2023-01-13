@@ -31,7 +31,7 @@ def get_user_moments(request):
 def get_user_moments_by_id(request):
     user_id = request.query_params.get("id")
 
-    moments = UserMoment.objects.filter(user__id=user_id)
+    moments = UserMoment.objects.filter(user__uuid=user_id)
     moments = UserMomentSerializer(moments, many=True)
 
     return Response(moments.data, status=HTTP_200_OK)
@@ -71,7 +71,7 @@ class UserMomentAPIView(APIView):
         data = request.query_params
         moment_id = data.get("id")
 
-        UserMoment.objects.filter(user=request.user, id=moment_id).delete()
+        UserMoment.objects.filter(user=request.user, uuid=moment_id).delete()
 
         return Response(status=HTTP_200_OK)
 
@@ -139,10 +139,10 @@ class EventMomentAPIView(BusinessAuthenticationAPIView):
 
     def delete(self, request):
         data = request.data
-        moment_id = data.get("moment_id")
+        moment_id = data.get("id")
 
         try:
-            moment = EventMoment.objects.get(id=moment_id)
+            moment = EventMoment.objects.get(uuid=moment_id)
             moment.delete()
 
             return Response(status=HTTP_200_OK)
@@ -164,7 +164,7 @@ class CurrentEventMomentAPIView(BusinessAuthenticationAPIView):
     def delete(self, request):
         params = request.query_params
 
-        slice_id = params.get("slice_id")
+        slice_id = params.get("id")
         is_deleting_moment = slice_id is None
 
         if not is_deleting_moment:
@@ -181,7 +181,7 @@ def get_event_moment_detail(request):
     event_id = request.query_params.get("id")
 
     try:
-        event = EventMoment.objects.get(id=event_id)
+        event = EventMoment.objects.get(uuid=event_id)
         event = EventMomentDetailSerializer(event, context={"user": request.user})
 
         return Response(event.data, status=HTTP_200_OK)
@@ -199,7 +199,7 @@ def user_go_to_event(request):
     event_id = request.data.get("id")
 
     try:
-        event = EventMoment.objects.get(id=event_id)
+        event = EventMoment.objects.get(uuid=event_id)
 
         user = request.user
         participants = event.participants

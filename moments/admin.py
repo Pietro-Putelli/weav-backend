@@ -1,15 +1,12 @@
-from urllib.parse import urlencode
-
 from django.contrib import admin
-from django.urls import reverse
-from django.utils.html import format_html
 from django.utils.text import Truncator
 
 from moments.models import EventMoment, EventMomentSlice, UserMoment
 
 
 class MomentAdmin(admin.ModelAdmin):
-    LIST_DISPLAY = ('id', 'text_content', 'has_source', 'has_business', 'has_url', 'has_location')
+    list_display = ('id', 'text_content', 'has_source', 'has_business', 'has_url', 'has_location')
+    readonly_fields = ('uuid',)
 
     @admin.display(
         boolean=True,
@@ -45,7 +42,7 @@ class MomentAdmin(admin.ModelAdmin):
 
 @admin.register(UserMoment)
 class UserMomentAdmin(MomentAdmin):
-    list_display = MomentAdmin.LIST_DISPLAY
+    list_display = MomentAdmin.list_display
 
 
 @admin.register(EventMoment)

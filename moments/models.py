@@ -1,16 +1,13 @@
-import datetime
 import uuid
 
 from django.core.validators import URLValidator
 from django.db import models
 from django.db.models import CASCADE
-from django.utils.timezone import now
 
-from core.fields import TextField
+from core.fields import TextField, ShortUUIDField
 from core.fields import UniqueNameFileField
 from core.models import TimestampModel
 from moments.managers import EventMomentManager, EventMomentSliceManager, UserMomentManager
-from servicies.date import parse_date
 from servicies.utils import get_abstract_related_name
 
 allow_blank = {"blank": True, "null": True}
@@ -40,6 +37,8 @@ def user_moment_source_path(instance, _):
 
 
 class UserMoment(TimestampModel, AbstractTagsModel):
+    uuid = ShortUUIDField()
+
     user = models.ForeignKey(
         "users.User", related_name="user_moment", on_delete=CASCADE)
 
@@ -69,6 +68,8 @@ def event_moment_source_path(instance, filename):
 
 
 class EventMoment(TimestampModel):
+    uuid = ShortUUIDField()
+
     business = models.ForeignKey(
         "business.Business", related_name="business_moment", db_index=False, on_delete=CASCADE)
 

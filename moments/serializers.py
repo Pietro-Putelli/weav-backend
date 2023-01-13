@@ -7,8 +7,6 @@ from rest_framework.serializers import ValidationError
 from business.models import Business
 from business.serializers import ShortBusinessSerializer, ShortChatBusinessSerializer
 from image_detector.NSFWDetector import is_moderated_source_valid
-from insights.choices import RepostAndShareChoices
-from insights.models import BusinessRepost
 from insights.utils import add_repost_to_event, add_repost_to_business
 from moments.models import EventMomentSlice, UserMoment, EventMoment
 from moments.tag_serializers import UrlTagSerializer, LocationTagSerializer
@@ -17,19 +15,26 @@ from profiles.serializers import ShortUserProfileSerializer, ShortUserProfileCha
 from servicies.date import get_date_tz_aware
 from servicies.utils import pop_or_none, update_for_object
 from shared.models import Location
-from shared.serializers import CreateLocationSerializer, LocationSerializer, PhoneSerializer
+from shared.serializers import CreateLocationSerializer, LocationSerializer
 from users.models import User
 
 
+class MomentIdSerializer(serializers.Serializer):
+    id = serializers.SerializerMethodField()
+
+    def get_id(self, moment):
+        return moment.uuid
+
+
 class CreateTagSerializer(serializers.Serializer):
-    business_tag = serializers.IntegerField(required=False)
+    business_tag = serializers.CharField(required=False)
     users_tag = serializers.ListField(required=False, child=serializers.CharField())
     location_tag = CreateLocationSerializer(required=False)
 
-    def validate_business_tag(self, business_id):
-        if business_id is not None:
+    def validate_business_tag(self, uuid):
+        if uuid is not None:
             try:
-                business = Business.objects.get(id=business_id)
+                business = Business.objects.get(uuid=uuid)
                 return business
             except Business.DoesNotExist:
                 pass
@@ -46,7 +51,8 @@ class CreateTagSerializer(serializers.Serializer):
         return None
 
 
-class CreateUserMomentSerializer(serializers.ModelSerializer, CreateTagSerializer):
+class CreateUserMomentSerializer(serializers.ModelSerializer, CreateTagSerializer,
+                                 MomentIdSerializer):
     # Location of the moment
     location = CreateLocationSerializer()
     slice_id = serializers.IntegerField(required=False)
@@ -136,24 +142,20 @@ class ShortEventMomentSliceSerializer(serializers.ModelSerializer):
         fields = ("id", "title", "source")
 
     def get_id(self, slice):
-        return slice.moment.id
+        return slice.moment.uuid
 
     def get_title(self, slice):
         return slice.moment.title
 
 
-class UserMomentSerializer(serializers.ModelSerializer, MomentTagsSerializer):
-    id = serializers.SerializerMethodField()
+class UserMomentSerializer(serializers.ModelSerializer, MomentTagsSerializer, MomentIdSerializer):
     user = ShortUserProfileChatSerializer()
     event_moment = ShortEventMomentSliceSerializer()
     has_custom_source = serializers.SerializerMethodField()
 
     class Meta:
         model = UserMoment
-        fields = "__all__"
-
-    def get_id(self, moment):
-        return f"moment.user.{moment.id}"
+        exclude = ("uuid", "location",)
 
     def get_has_custom_source(self, moment):
         return hasattr(moment, "business_tag") and bool(moment.source)
@@ -173,14 +175,13 @@ class EventMomentSlicesSerializer(serializers.Serializer):
         return slices.data
 
 
-class VeryShortEventMomentSerializer(serializers.ModelSerializer):
+class VeryShortEventMomentSerializer(serializers.ModelSerializer, MomentIdSerializer):
     class Meta:
         model = EventMoment
         fields = ("id", "title")
 
 
-class ShortEventMomentSerializer(EventMomentSlicesSerializer):
-    id = serializers.IntegerField()
+class ShortEventMomentSerializer(EventMomentSlicesSerializer, MomentIdSerializer):
     title = serializers.CharField()
     business = ShortBusinessSerializer()
 
@@ -220,7 +221,7 @@ class EventMomentDetailSerializer(serializers.ModelSerializer):
         return event.participants.count()
 
 
-class EventMomentSerializer(ShortEventMomentSerializer):
+class EventMomentSerializer(ShortEventMomentSerializer, MomentIdSerializer):
     location = LocationSerializer()
     selected_slice = serializers.SerializerMethodField()
 
@@ -234,13 +235,14 @@ class EventMomentSerializer(ShortEventMomentSerializer):
         return selected
 
 
-class MyEventMomentSerializer(serializers.ModelSerializer):
+class MyEventMomentSerializer(serializers.ModelSerializer, MomentIdSerializer):
     class Meta:
         model = EventMoment
         fields = ("id", "title", "date", "time")
 
 
-class CurrentEventMomentSerializer(serializers.ModelSerializer, EventMomentSlicesSerializer):
+class CurrentEventMomentSerializer(serializers.ModelSerializer, EventMomentSlicesSerializer,
+                                   MomentIdSerializer):
     location = LocationSerializer()
 
     class Meta:

@@ -22,11 +22,10 @@ from users.models import User
 
 class ProfileAPIView(AuthenticationMixinAPIView):
     def get(self, request):
-        user_id = request.query_params.get("user_id")
+        user_id = request.query_params.get("id")
 
         try:
-            profile = UserProfile.objects.get(user__id=user_id)
-
+            profile = UserProfile.objects.get(user__uuid=user_id)
             user = request.user
 
             if isinstance(user, User):
@@ -61,7 +60,7 @@ class ProfileAPIView(AuthenticationMixinAPIView):
             if interests.count() > 0:
                 user.profile.set_interests(interests)
         elif update_key == "username":
-            User.objects.filter(id=user.id).update(**data)
+            User.objects.filter(uuid=user.uuid).update(**data)
         elif update_key == "phone":
             phone_data = data.get("phone")
             serializer = CreatePhoneSerializer(data=phone_data)
@@ -93,7 +92,7 @@ def get_profile_info(request):
 
 @api_view(["PUT"])
 def update_user_password(request):
-    user = User.objects.get(id=request.user.id)
+    user = request.user
     data = request.data
 
     old_password = data.get("old_password")
@@ -152,11 +151,11 @@ class BlockUser(APIView):
     def post(self, request):
         data = request.data
 
-        user_id = data.get("user_id")
+        uuid = request.query_params.get("id")
         mode = data.get("mode")
 
         my_profile = request.user.profile
-        user = User.objects.get(id=user_id)
+        user = User.objects.get(uuid=uuid)
 
         if mode == "block":
             my_profile.blocked_users.add(user)
@@ -199,10 +198,10 @@ class UserFeedAPIView(APIView):
         return Response(moments.data, status=HTTP_200_OK)
 
     def delete(self, request):
-        moment_id = request.query_params.get("moment_id")
+        moment_id = request.query_params.get("id")
 
         try:
-            moment = UserMoment.objects.get(id=moment_id)
+            moment = UserMoment.objects.get(uuid=moment_id)
             moment.users_tag.remove(request.user)
 
             return Response(status=HTTP_200_OK)
@@ -222,12 +221,12 @@ class UserFeedAPIView(APIView):
 class UserFriendRequestAPIView(APIView):
     def post(self, request):
         data = request.data
-        user_id = data.get("user_id")
+        uuid = data.get("id")
 
         user = request.user
 
         try:
-            friend = User.objects.get(id=user_id)
+            friend = User.objects.get(uuid=uuid)
         except User.DoesNotExist:
             return Response(status=HTTP_404_NOT_FOUND)
 

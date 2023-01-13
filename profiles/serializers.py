@@ -3,14 +3,13 @@ from rest_framework import serializers
 from moments.models import UserMoment
 from profiles.models import UserProfile
 from profiles.utils import get_friendship_state
-from shared.serializers import PhoneSerializer, StaticFeatureSerializer
+from shared.serializers import PhoneSerializer
 
 PROFILE_FIELDS = ("name", "bio", "link", "instagram", "friend_state")
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
     phone = PhoneSerializer()
-    interests = StaticFeatureSerializer()
     friend_state = serializers.SerializerMethodField()
     has_moments = serializers.SerializerMethodField()
 
@@ -32,12 +31,15 @@ class UserChatProfileSerializer(UserProfileSerializer):
 
 
 class ShortUserProfileSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
     username = serializers.CharField()
+    id = serializers.SerializerMethodField()
     picture = serializers.SerializerMethodField()
 
-    def get_picture(self, instance):
-        picture = instance.profile.picture
+    def get_id(self, user):
+        return user.uuid
+
+    def get_picture(self, user):
+        picture = user.profile.picture
 
         try:
             picture_url = picture.url
@@ -47,12 +49,12 @@ class ShortUserProfileSerializer(serializers.Serializer):
 
 
 class ShortProfileSerializer(serializers.Serializer):
-    id = serializers.SerializerMethodField()
+    uuid = serializers.SerializerMethodField()
     username = serializers.SerializerMethodField()
     picture = serializers.ImageField()
 
     def get_id(self, profile):
-        return profile.user.id
+        return profile.user.uuid
 
     def get_username(self, profile):
         return profile.user.username
@@ -66,8 +68,11 @@ class ShortUserProfileChatSerializer(ShortUserProfileSerializer):
 
 
 class UserFriendRequestSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
+    id = serializers.SerializerMethodField()
     user = serializers.SerializerMethodField()
 
-    def get_user(self, request):
-        return ShortUserProfileSerializer(request.user).data
+    def get_id(self, profile):
+        return profile.user.uuid
+
+    def get_user(self, profile):
+        return ShortUserProfileSerializer(profile.user).data

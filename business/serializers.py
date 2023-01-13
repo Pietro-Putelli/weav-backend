@@ -108,7 +108,14 @@ class BusinessMeSerializer(serializers.Serializer):
 SHORT_BUSINESS_SERIALIZER_FIELDS = ("id", "name", "cover_source", "city", "type")
 
 
-class ShortBusinessSerializer(serializers.ModelSerializer):
+class BusinessIdSerializer(serializers.Serializer):
+    id = serializers.SerializerMethodField()
+
+    def get_id(self, business):
+        return business.uuid
+
+
+class ShortBusinessSerializer(serializers.ModelSerializer, BusinessIdSerializer):
     city = serializers.SerializerMethodField()
     type = serializers.SerializerMethodField()
 
@@ -144,7 +151,7 @@ class ShortMyBusinessSerializer(ShortBusinessSerializer):
         return BusinessToken.objects.get(business=business).key
 
 
-class BusinessSerializer(serializers.ModelSerializer):
+class BusinessSerializer(serializers.ModelSerializer, BusinessIdSerializer):
     location = LocationSerializer()
     phone = PhoneSerializer()
 
@@ -161,6 +168,9 @@ class BusinessSerializer(serializers.ModelSerializer):
     class Meta:
         model = Business
         exclude = ("is_approved", "settings", "owner")
+
+    def get_id(self, business):
+        return business.uuid
 
     def get_likes(self, business):
         return business.likes.count()
@@ -199,7 +209,8 @@ class CategoriesBusinessSerializer(serializers.Serializer):
         return serialized.data
 
 
-class EditBusinessSerializer(serializers.ModelSerializer, CategoriesBusinessSerializer):
+class EditBusinessSerializer(serializers.ModelSerializer, CategoriesBusinessSerializer,
+                             BusinessIdSerializer):
     category = StaticFeatureSerializer()
     amenities = StaticFeatureSerializer(required=False, many=True)
     location = LocationSerializer()

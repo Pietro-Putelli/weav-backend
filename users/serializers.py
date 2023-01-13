@@ -97,7 +97,7 @@ class LoginSerializer(serializers.ModelSerializer):
         )
 
     def get_id(self, profile):
-        return profile.user.id
+        return profile.user.uuid
 
     def get_auth_token(self, profile):
         return Token.objects.get(user=profile.user).key

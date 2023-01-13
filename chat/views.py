@@ -10,7 +10,6 @@ from rest_framework.viewsets import ViewSet
 
 from business.authentication import business_authentication
 from business.models import Business
-from chances.utils import get_current_chance
 from chat.functions import get_my_chats, get_business_chats, get_chat_model
 from chat.models import (BusinessChat, BusinessChatMessage, Chat, ChatMessage,
                          ChatMessageReactions)
@@ -41,7 +40,7 @@ class ChatView(AuthenticationMixinAPIView):
         chat = {}
 
         if receiver_id is not None:
-            receiver = User.objects.get(id=receiver_id)
+            receiver = User.objects.get(uuid=receiver_id)
 
             chat = Chat.objects.create(sender=request.user, receiver=receiver)
 
@@ -62,9 +61,9 @@ class ChatView(AuthenticationMixinAPIView):
 
         response = {"chats": chats}
 
-        if offset == 0:
-            chance = get_current_chance(request.user)
-            response["chance"] = chance
+        # if offset == 0:
+        #     chance = get_current_chance(request.user)
+        #     response["chance"] = chance
 
         return Response(response, status=HTTP_200_OK)
 
@@ -142,9 +141,9 @@ class MessagesViewSet(ViewSet):
 
 @api_view(["GET"])
 def get_chat_by_user(request):
-    receiver_id = cast_to_int(request.query_params.get("user_id"))
+    receiver_id = request.query_params.get("user_id")
 
-    receiver = User.objects.get(id=receiver_id)
+    receiver = User.objects.get(uuid=receiver_id)
     my_chat = Chat.objects.get_chat(request.user, receiver)
 
     if my_chat is not None:
@@ -223,7 +222,7 @@ def mute_chat(request):
 class ShareViewSet(ViewSet):
     def _get_receivers(self, request):
         receivers = request.data.get("receivers")
-        return User.objects.filter(id__in=receivers)
+        return User.objects.filter(uuid__in=receivers)
 
     def moment(self, request):
         data = request.data
@@ -238,11 +237,11 @@ class ShareViewSet(ViewSet):
 
         if moment_id:
             try:
-                moment = UserMoment.objects.get(id=moment_id)
+                moment = UserMoment.objects.get(uuid=moment_id)
 
                 for receiver in receivers:
-                    chat = Chat.objects.get_or_create(user, receiver)
-                    ChatMessage.objects.create(chat=chat, sender=user, receiver=receiver,
+                    chat = Chat.objects.get_or_create(user, receiver.user)
+                    ChatMessage.objects.create(chat=chat, sender=user, receiver=receiver.user,
                                                user_moment=moment)
                     chats.append(chat)
 
@@ -313,10 +312,10 @@ class ShareViewSet(ViewSet):
         try:
             moment = None
             if not receiver_id:
-                moment = UserMoment.objects.get(id=moment_id)
+                moment = UserMoment.objects.get(uuid=moment_id)
                 receiver = moment.user
             else:
-                receiver = User.objects.get(id=receiver_id)
+                receiver = User.objects.get(uuid=receiver_id)
 
             chat = Chat.objects.get_or_create(user, receiver)
 
@@ -347,10 +346,10 @@ def create_business_chat(request):
     data = request.data
 
     content = data.get("content")
-    business_id = data.get("business_id")
+    business_id = data.get("id")
 
     try:
-        business = Business.objects.get(id=business_id)
+        business = Business.objects.get(uuid=business_id)
         user = request.user
 
         chat = BusinessChat.objects.create(user=user, business=business)
@@ -376,9 +375,9 @@ def get_my_business_chats(request):
 @api_view(["GET"])
 def get_chat_for_business(request):
     params = request.query_params
-    business_id = params.get("business_id")
+    business_id = params.get("id")
 
-    chat = BusinessChat.objects.filter(user=request.user, business__id=business_id).first()
+    chat = BusinessChat.objects.filter(user=request.user, business__uuid=business_id).first()
 
     if chat is not None:
         chat = BusinessChatSerializer(chat, context={"is_user": True}).data

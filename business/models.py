@@ -5,6 +5,7 @@ from django.db.models.query_utils import Q
 from phonenumber_field.modelfields import PhoneNumberField
 
 from business.managers import BusinessManager
+from core.fields import ShortUUIDField
 from core.models import TimestampModel
 
 allow_blank = {"blank": True, "null": True}
@@ -25,6 +26,8 @@ def business_source_path(instance, filename):
 
 
 class Business(TimestampModel):
+    uuid = ShortUUIDField()
+
     owner = models.ForeignKey("users.User", on_delete=models.CASCADE, related_name="business_owner")
 
     name = models.CharField(max_length=32, default=None)

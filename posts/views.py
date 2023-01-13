@@ -126,7 +126,7 @@ class UserPostAPIView(PostAPIView, AuthenticationMixinAPIView):
         params = request.query_params
 
         post_id = params.get("post_id")
-        slice_id = params.get("slice_id")
+        slice_id = params.get("id")
 
         if post_id is not None:
             UserPost.objects.filter(id=post_id).delete()
@@ -142,7 +142,6 @@ class UserPostAPIView(PostAPIView, AuthenticationMixinAPIView):
                 post.delete()
 
         return Response(status=HTTP_200_OK)
-
 
 
 class BusinessPostAPIView(PostAPIView, BusinessAuthenticationAPIView):
@@ -215,7 +214,7 @@ class BusinessPostAPIView(PostAPIView, BusinessAuthenticationAPIView):
         params = request.query_params
 
         post_id = params.get("post_id")
-        slice_id = params.get("slice_id")
+        slice_id = params.get("id")
 
         if post_id is not None:
             BusinessPost.objects.filter(id=post_id).delete()
@@ -237,10 +236,10 @@ class BusinessPostAPIView(PostAPIView, BusinessAuthenticationAPIView):
 def get_business_posts(request):
     params = request.query_params
 
-    business_id = params.get("business_id")
+    uuid = params.get("id")
 
     try:
-        business = Business.objects.get(id=business_id)
+        business = Business.objects.get(uuid=uuid)
     except Business.DoesNotExist:
         return Response(status=HTTP_404_NOT_FOUND)
 

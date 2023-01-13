@@ -82,7 +82,7 @@ class BusinessPostSerializer(PostSerializer):
     slices = serializers.SerializerMethodField()
 
     def get_business_id(self, post):
-        return post.business.id
+        return post.business.uuid
 
     def get_slices(self, post):
         slices = BusinessPostSlice.objects.filter(post=post)

@@ -2,6 +2,7 @@ import secrets
 
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
+from core.fields import ShortUUIDField
 
 from core.models import TimestampModel
 from users.managers import UserManager, TokenCodeManager, AccessTokenManager
@@ -10,6 +11,8 @@ no_blank = {'blank': False, 'null': False}
 
 
 class User(AbstractBaseUser, PermissionsMixin, TimestampModel):
+    uuid = ShortUUIDField()
+
     username = models.CharField(max_length=32, unique=True)
     email = models.EmailField(**no_blank)
 

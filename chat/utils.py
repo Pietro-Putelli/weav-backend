@@ -30,7 +30,7 @@ def create_user_message(message, user):
     content = message.get("content")
 
     try:
-        receiver = User.objects.get(id=receiver_id)
+        receiver = User.objects.get(uuid=receiver_id)
         chat = Chat.objects.get(id=chat_id)
     except (User.DoesNotExist, Chat.DoesNotExist):
         raise ValueError("User or Chat does not exist")

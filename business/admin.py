@@ -4,7 +4,7 @@ from business.models import Business, BusinessToken
 
 
 @admin.action(description='Mark selected business as approved')
-def approve_business(modeladmin, request, queryset):
+def approve_business(_, __, queryset):
     queryset.update(is_approved=True)
 
 

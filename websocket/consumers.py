@@ -42,7 +42,7 @@ class UserChatConsumer(ChatConsumer):
         self.user = self.scope.get("user")
 
         if self.user is not None:
-            self.chat_group_name = f"user.{self.user.id}"
+            self.chat_group_name = f"user.{self.user.uuid}"
 
             await self.channel_layer.group_add(self.chat_group_name, self.channel_name)
             await self.accept()
@@ -102,7 +102,7 @@ class BusinessChatConsumer(ChatConsumer):
         self.business = self.scope.get("business")
 
         if self.business is not None:
-            self.chat_group_name = f"business.{self.business.id}"
+            self.chat_group_name = f"business.{self.business.uuid}"
 
             await self.channel_layer.group_add(self.chat_group_name, self.channel_name)
             await self.accept()

@@ -29,13 +29,10 @@ class EventDiscussionMessageSerializer(serializers.ModelSerializer):
 
 
 class EventDiscussionSerializer(serializers.Serializer):
-    id = serializers.SerializerMethodField()
+    id = serializers.IntegerField()
     event = DiscussionEventSerializer()
     messages = serializers.SerializerMethodField()
     muted = serializers.SerializerMethodField()
-
-    def get_id(self, discussion):
-        return f"discussion.{discussion.id}"
 
     def get_messages(self, discussion):
         messages = EventDiscussionMessage.objects.filter(discussion=discussion)[0:10]
