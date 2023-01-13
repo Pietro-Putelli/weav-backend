@@ -6,7 +6,7 @@ from profiles.views import (
     BlockUser,
     change_profile_picture,
     update_user_password, search_users, UserFeedAPIView, UserFriendRequestAPIView,
-    UserFriendAPIView, get_profile_info, get_user_interests_list, get_recent_users
+    UserFriendAPIView, get_profile_info, get_user_interests_list, get_recent_users, set_device_token
 )
 
 urlpatterns = [

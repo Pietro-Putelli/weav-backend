@@ -99,9 +99,12 @@ class ChatSerializer(serializers.Serializer):
         user = self.context.get("user")
         return ChatMessage.objects.filter(chat=instance, receiver=user, seen=False).count()
 
-    def get_muted(self, instance):
+    def get_muted(self, chat):
         user = self.context.get("user")
-        return user in instance.muted_by.all()
+
+        if user == chat.sender:
+            return chat.sender_mute
+        return chat.receiver_mute
 
 
 class BusinessChatMessageSerializer(serializers.Serializer):

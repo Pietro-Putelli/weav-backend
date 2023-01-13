@@ -193,23 +193,16 @@ def mute_chat(request):
     type = data.get("type")
 
     try:
-        if type == "user":
-            model = Chat
-        else:
-            model = BusinessChat
-
-        chat = model.objects.get(id=chat_id)
-
+        chat = Chat.objects.get(id=chat_id)
     except Chat.DoesNotExist:
         return Response(status=HTTP_404_NOT_FOUND)
 
-    muted_users = chat.muted_by
-    user = request.user
-
-    if user not in muted_users.all():
-        muted_users.add(user)
+    if chat.sender == request.user:
+        chat.sender_mute = not chat.sender_mute
     else:
-        muted_users.remove(user)
+        chat.receiver_mute = not chat.receiver_mute
+
+    chat.save()
 
     return Response(status=HTTP_200_OK)
 

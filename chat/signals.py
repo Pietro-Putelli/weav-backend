@@ -12,8 +12,18 @@ def send_user_chat(instance, created, **_):
     if created:
         channel_name = f"user.{instance.receiver.uuid}"
 
-        chat = ChatSerializer(instance.chat, context={
-            "user": instance.receiver}).data
+        chat = instance.chat
+        msg_sender = instance.sender
+        msg_receiver = instance.receiver
+
+        chat_sender, chat_receiver = chat.sender, chat.receiver
+
+        has_sender_muted_chat = chat_sender == msg_sender and chat.receiver_mute
+        has_receiver_muted_chat = chat_receiver == msg_sender and chat.sender_mute
+
+        # Use this two boolean to mute push notifications
+
+        chat = ChatSerializer(chat, context={"user": msg_receiver}).data
 
         send_data_to_socket_channel(channel_name, SocketActions.CHAT, chat)
 
