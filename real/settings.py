@@ -206,26 +206,5 @@ EMAIL_HOST_USER = "finixapps@gmail.com"
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = True
 
-# PHONE
-
-TWILIO_SID = env("TWILIO_SID")
-TWILIO_SECRET = env("TWILIO_SECRET")
-ACCOUNT_SECURITY_API_KEY = env("ACCOUNT_SECURITY_API_KEY")
-
-# PHONE_VERIFICATION = {
-#     "BACKEND": "phone_verify.backends.twilio.TwilioBackend",
-#     "OPTIONS": {
-#         "SID": TWILIO_SID,
-#         "SECRET": TWILIO_SECRET,
-#         "FROM": "+12565872727",
-#         "SANDBOX_TOKEN": "123456",
-#     },
-#     "TOKEN_LENGTH": 6,
-#     "MESSAGE": "Welcome to {app}! Please use security code {security_code} to proceed.",
-#     "APP_NAME": "Phone Verify",
-#     "SECURITY_CODE_EXPIRATION_TIME": 3600,
-#     "VERIFY_SECURITY_CODE_ONLY_ONCE": False,
-# }
-
 GOOGLE_CLIENT_ID = env("GOOGLE_CLIENT_ID")
 MAP_BOX_ACCESS_TOKEN = env("MAP_BOX_ACCESS_TOKEN")
