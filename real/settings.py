@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     "shared.apps.SharedConfig",
     "discussions.apps.DiscussionsConfig",
     "chances.apps.ChancesConfig",
+    "devices.apps.DevicesConfig",
 ]
 
 MIDDLEWARE = [
