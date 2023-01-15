@@ -15,6 +15,7 @@ urlpatterns = [
 
     path("update/password/", update_user_password, name="update_user_password"),
     path("update/picture/", change_profile_picture, name="change_profile_picture"),
+    path("device-token/", set_device_token, name="set_device_token"),
 
     path("settings/", ProfileSettings.as_view(), name="profile_settings"),
 

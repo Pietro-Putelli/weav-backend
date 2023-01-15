@@ -6,9 +6,12 @@ from profiles.serializers import ShortUserProfileSerializer
 
 
 class DiscussionEventSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
+    id = serializers.SerializerMethodField()
     title = serializers.CharField()
     cover = serializers.SerializerMethodField()
+
+    def get_id(self, event):
+        return event.uuid
 
     def get_cover(self, event):
         first_slice = EventMomentSlice.objects.get_cover(event)
@@ -29,10 +32,13 @@ class EventDiscussionMessageSerializer(serializers.ModelSerializer):
 
 
 class EventDiscussionSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
+    id = serializers.SerializerMethodField()
     event = DiscussionEventSerializer()
     messages = serializers.SerializerMethodField()
     muted = serializers.SerializerMethodField()
+
+    def get_id(self, discussion):
+        return f"discussion.{discussion.id}"
 
     def get_messages(self, discussion):
         messages = EventDiscussionMessage.objects.filter(discussion=discussion)[0:10]

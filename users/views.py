@@ -220,14 +220,10 @@ def send_test_email(request):
 def create_user(request):
     data = request.data
 
-    username = data.get("username")
-    email = data.get("email")
-    password = data.get("password")
     name = data.get("name")
+    email = data.get("email")
+    username = data.get("username")
 
-    user = User.objects.create_user(username=username, email=email)
-    user.set_password(password)
-
-    UserProfile.objects.create(user=user, name=name)
+    user = User.objects.create_user(username=username, email=email, name=name)
 
     return Response(status=HTTP_200_OK)

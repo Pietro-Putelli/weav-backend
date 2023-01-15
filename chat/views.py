@@ -222,7 +222,7 @@ class ShareViewSet(ViewSet):
         user = request.user
 
         moment_id = data.get("moment_id")
-        moment_slice_id = data.get("moment_slice_id")
+        event_slice_id = data.get("event_slice_id")
 
         receivers = self._get_receivers(request)
 
@@ -242,7 +242,7 @@ class ShareViewSet(ViewSet):
                 return Response(status=HTTP_404_NOT_FOUND)
         else:
             try:
-                slice = EventMomentSlice.objects.get(id=moment_slice_id)
+                slice = EventMomentSlice.objects.get(id=event_slice_id)
 
                 add_share_to_event(request.user, slice.moment)
 

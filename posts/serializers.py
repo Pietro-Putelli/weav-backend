@@ -64,7 +64,7 @@ class UserPostSerializer(PostSerializer):
     slices = serializers.SerializerMethodField()
 
     def get_user_id(self, post):
-        return post.user.id
+        return post.user.uuid
 
     def get_slices(self, post):
         slices = UserPostSlice.objects.filter(post=post)

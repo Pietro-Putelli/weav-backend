@@ -185,6 +185,18 @@ def search_users(request):
     return Response(users, status=HTTP_200_OK)
 
 
+@api_view(["PUT"])
+def set_device_token(request):
+    data = request.data
+    device_token = data.get("token")
+
+    profile = request.user.profile
+    profile.device_token = device_token
+    profile.save()
+
+    return Response(status=HTTP_200_OK)
+
+
 class UserFeedAPIView(APIView):
     def get(self, request):
         params = request.query_params

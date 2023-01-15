@@ -9,11 +9,14 @@ from websocket.utils import send_data_to_socket_channel
 
 @receiver(post_save, sender=EventDiscussionMessage)
 def update_discussion_list(instance, created, **_):
+    sender = instance.sender
     discussion = instance.discussion
 
+    members = discussion.members.all().exclude(uuid=sender.uuid)
+
     if created:
-        for member in discussion.members.all():
-            channel_name = f"user.{member.id}"
+        for member in members:
+            channel_name = f"user.{member.uuid}"
 
             new_discussion = EventDiscussionSerializer(discussion)
             send_data_to_socket_channel(channel_name, SocketActions.CHAT, new_discussion.data)

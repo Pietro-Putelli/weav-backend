@@ -49,7 +49,7 @@ class ShortUserProfileSerializer(serializers.Serializer):
 
 
 class ShortProfileSerializer(serializers.Serializer):
-    uuid = serializers.SerializerMethodField()
+    id = serializers.SerializerMethodField()
     username = serializers.SerializerMethodField()
     picture = serializers.ImageField()
 

@@ -64,7 +64,7 @@ class ChatManager(Manager):
 
         are_friends = UserFriend.objects.are_friends(sender, receiver)
 
-        UserChance.objects.get_chances(sender).delete()
+        # UserChance.objects.get_chances(sender).delete()
 
         return super().create(is_active=are_friends, **kwargs)
 

@@ -10,6 +10,7 @@ from discussions.managers import EventDiscussionMessageManager
 class EventDiscussion(AbstractChat):
     event = models.OneToOneField("moments.EventMoment", on_delete=models.CASCADE)
     members = models.ManyToManyField("users.User", related_name="event_members")
+    muted_by = models.ManyToManyField("users.User", related_name="muted_by_users")
 
     def __str__(self):
         return f"{self.event.id} • {self.event.business.name}"
