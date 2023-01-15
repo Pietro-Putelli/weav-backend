@@ -208,3 +208,10 @@ EMAIL_USE_TLS = True
 
 GOOGLE_CLIENT_ID = env("GOOGLE_CLIENT_ID")
 MAP_BOX_ACCESS_TOKEN = env("MAP_BOX_ACCESS_TOKEN")
+
+# iOS Push Notifications
+
+APNS_AUTH_KEY = os.path.join(BASE_DIR, "real/certificates/apns.p8")
+IOS_TEAM_ID = env("IOS_TEAM_ID")
+IOS_APP_BUNDLE_ID = env("IOS_APP_BUNDLE_ID")
+APNS_KEY_ID = env("APNS_KEY_ID")

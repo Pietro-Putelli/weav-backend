@@ -418,8 +418,8 @@ def test(request):
         )
     else:
         my_user = User.objects.get(id=2)
-        user = User.objects.get(id=10)
-        chat = Chat.objects.get(id=8)
+        user = User.objects.get(id=28)
+        chat = Chat.objects.get(id=2)
 
         ChatMessage.objects.create(
             chat=chat,

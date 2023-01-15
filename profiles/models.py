@@ -55,9 +55,6 @@ class UserProfile(models.Model):
     # Latest user place id, to know its latest position
     latest_place_id = models.CharField(max_length=64, **allow_blank)
 
-    # Device token used to send push notifications
-    device_token = models.CharField(max_length=255, editable=False, **allow_blank)
-
     objects = UserProfileManager()
 
     def __str__(self):

@@ -1,18 +1,16 @@
+import asyncio
+
 from django.db import models
-from apns2.payload import Payload
-from apns2.client import APNsClient
+
 from devices.managers import DeviceManager
+from devices.utils import send_ios_notification
 
 
 class Device(models.Model):
-    user = models.ForeignKey("users.User", on_delete=models.CASCADE, unique=True)
+    user = models.OneToOneField("users.User", on_delete=models.CASCADE)
     token = models.CharField(max_length=255)
 
     objects = DeviceManager()
 
-    def send_notification(self, message):
-        payload = Payload(alert="Hello World!", sound="default", badge=1)
-        topic = 'com.app.weav'
-        client = APNsClient('../real/certificates/ios_push_notifications.cer', use_sandbox=False,
-                            use_alternative_port=False)
-        client.send_notification(self.token, payload, topic)
+    def send_notification(self, sender, message):
+        asyncio.run(send_ios_notification(self.token, sender, message))

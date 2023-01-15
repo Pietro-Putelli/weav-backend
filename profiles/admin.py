@@ -7,7 +7,6 @@ from profiles.models import UserProfile, UserFriendRequest, \
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ("user", "id")
-    readonly_fields = ("device_token",)
 
 
 @admin.register(UserFriendRequest)

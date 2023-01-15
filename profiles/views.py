@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 
 from core.authentication import AuthenticationMixinAPIView
 from core.querylimits import QueryLimits
+from devices.models import Device
 from moments.models import UserMoment
 from moments.serializers import UserMomentSerializer
 from pp_placehoder.generator import generate_profile_placeholder
@@ -188,11 +189,9 @@ def search_users(request):
 @api_view(["PUT"])
 def set_device_token(request):
     data = request.data
-    device_token = data.get("token")
+    token = data.get("token")
 
-    profile = request.user.profile
-    profile.device_token = device_token
-    profile.save()
+    Device.objects.update_or_create(user=request.user, token=token)
 
     return Response(status=HTTP_200_OK)
 

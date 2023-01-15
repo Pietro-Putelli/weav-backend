@@ -8,5 +8,5 @@ from devices.models import Device
 @api_view(['GET'])
 def send_notification(request):
     device = Device.objects.get(user=request.user)
-    device.send_notification('Hello World!')
+    device.send_notification()
     return Response(status=HTTP_200_OK)
