@@ -18,7 +18,7 @@ from chat.serializers import (BusinessChatMessageSerializer,
                               ChatSerializer)
 from core.authentication import authentication_mixin, AuthenticationMixinAPIView
 from insights.utils import add_share_to_event, add_share_to_business
-from moments.models import EventMomentSlice, UserMoment
+from moments.models import EventMomentSlice, UserMoment, EventMoment
 from servicies.date import today_date
 from servicies.utils import cast_to_int
 from users.models import User
@@ -413,7 +413,7 @@ def test(request):
 
         BusinessChatMessage.objects.create(
             chat=chat,
-            user=None,
+            user=to_user,
             content="Zt+HSIePCtHCXuLFjLlKXl64YUTTHZv1RXf/gMqFtzVrjSA7rVLS4Ct7+e+/h1lj"
         )
     else:
@@ -421,11 +421,21 @@ def test(request):
         user = User.objects.get(id=28)
         chat = Chat.objects.get(id=2)
 
+        user_profile = User.objects.get(id=3)
+        business_profile = Business.objects.get(id=1)
+
+        user_moment = UserMoment.objects.get(id=3)
+        event_moment = EventMomentSlice.objects.get(id=1)
+
+        hey_reaction = ChatMessageReactions.HEY
+        emoji_reaction = ChatMessageReactions.EMOJI
+
         ChatMessage.objects.create(
             chat=chat,
             receiver=my_user,
             sender=user,
-            content=RANDOM
+            content="🤬",
+            reaction=emoji_reaction
         )
 
     return Response(status=HTTP_200_OK)

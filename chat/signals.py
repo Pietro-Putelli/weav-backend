@@ -27,7 +27,7 @@ def send_user_chat(instance, created, **_):
         if (is_chat_sender and not chat.receiver_mute) or (
                 is_chat_receiver and not chat.sender_mute):
             device = Device.objects.filter(user=msg_receiver).first()
-            device.send_notification(msg_sender, message)
+            device.send_notification(msg_receiver, message)
 
         chat = ChatSerializer(chat, context={"user": msg_receiver}).data
 
@@ -36,16 +36,28 @@ def send_user_chat(instance, created, **_):
 
 @receiver(post_save, sender=BusinessChatMessage)
 def send_business_chat(instance, created, **_):
-    if created:
-        is_receiver_user = instance.user is not None
+    message = instance
 
-        chat = instance.chat
+    if created:
+        is_receiver_user = message.user is not None
+
+        chat = message.chat
+        chat_user = chat.user
+        chat_business = chat.business
 
         if is_receiver_user:
-            channel_name = f"user.{chat.user.uuid}"
+            channel_name = f"user.{chat_user.uuid}"
+            device = Device.objects.filter(user=chat_user).first()
+
+            msg_sender = chat_business
+
         else:
-            business = chat.business
-            channel_name = f"business.{business.uuid}"
+            channel_name = f"business.{chat_business.uuid}"
+            device = Device.objects.filter(user=chat_business.owner).first()
+
+            msg_sender = chat_user
+
+        device.send_notification(msg_sender, message)
 
         chat = BusinessChatSerializer(
             chat, context={"is_user": is_receiver_user}).data

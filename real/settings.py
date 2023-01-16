@@ -215,3 +215,6 @@ APNS_AUTH_KEY = os.path.join(BASE_DIR, "real/certificates/apns.p8")
 IOS_TEAM_ID = env("IOS_TEAM_ID")
 IOS_APP_BUNDLE_ID = env("IOS_APP_BUNDLE_ID")
 APNS_KEY_ID = env("APNS_KEY_ID")
+
+# Android Push Notifications
+ANDROID_API_KEY = env("ANDROID_API_KEY")
