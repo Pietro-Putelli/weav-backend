@@ -17,6 +17,7 @@ from chat.serializers import (BusinessChatMessageSerializer,
                               BusinessChatSerializer, ChatMessageSerializer,
                               ChatSerializer)
 from core.authentication import authentication_mixin, AuthenticationMixinAPIView
+from discussions.models import EventDiscussion, EventDiscussionMessage
 from insights.utils import add_share_to_event, add_share_to_business
 from moments.models import EventMomentSlice, UserMoment, EventMoment
 from servicies.date import today_date
@@ -401,12 +402,18 @@ def read_business_chat_messages(request):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def test(request):
-    b = request.query_params.get("b")
+    type = request.query_params.get("type")
 
     RANDOM = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(
         10))
 
-    if b == "true":
+    if type == "discussion":
+        discussion = EventDiscussion.objects.get(id=1)
+        sender = User.objects.get(id=3)
+
+        EventDiscussionMessage.objects.create(discussion=discussion, sender=sender, content=RANDOM)
+
+    elif type == "business":
         to_user = User.objects.get(id=2)
         business = Business.objects.get(id=1)
         chat = BusinessChat.objects.get(business=business, user=to_user)
@@ -419,7 +426,7 @@ def test(request):
     else:
         my_user = User.objects.get(id=2)
         user = User.objects.get(id=28)
-        chat = Chat.objects.get(id=2)
+        chat = Chat.objects.get(id=15)
 
         user_profile = User.objects.get(id=3)
         business_profile = Business.objects.get(id=1)
@@ -434,8 +441,7 @@ def test(request):
             chat=chat,
             receiver=my_user,
             sender=user,
-            content="🤬",
-            reaction=emoji_reaction
+            content="Heyyy",
         )
 
     return Response(status=HTTP_200_OK)

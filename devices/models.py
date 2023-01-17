@@ -1,7 +1,7 @@
 from django.db import models
 
 from devices.managers import DeviceManager
-from devices.utils import send_ios_notification, send_android_notification, get_notifications_body
+from devices.utils import send_ios_notification, send_android_notification
 
 
 class Device(models.Model):
@@ -10,10 +10,8 @@ class Device(models.Model):
 
     objects = DeviceManager()
 
-    def send_notification(self, sender, message):
-        username, msg_body = get_notifications_body(sender, message)
-
-        args = (self.token, username, msg_body)
+    def send_notification(self, sender, message, type):
+        args = (self.token, sender, message, type)
 
         if len(self.token) <= 64:
             send_ios_notification(*args)

@@ -1,5 +1,8 @@
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
+
+from devices.models import Device
+from devices.utils import NotificationType
 from moments.models import UserMoment
 from websocket.actions import SocketActions
 from websocket.utils import send_data_to_socket_channel
@@ -17,15 +20,23 @@ def post_delete_user_moment(sender, instance, **kwargs):
 '''
 
 
-def post_save_send_moment_mention(sender, instance, **kwargs):
-    mentioned_users = instance.users_tag.all()
+def post_save_send_moment_mention(instance, **_):
+    moment = instance
+
+    mentioned_users = moment.users_tag.all()
+    sender = moment.user
 
     if mentioned_users.count() > 0:
         for user in mentioned_users:
             socket_channel = f"user.{user.id}"
-            data = {"id": instance.id}
+            data = {"id": moment.id}
 
             send_data_to_socket_channel(socket_channel, SocketActions.USER_MENTION_MOMENT, data)
+
+            device = Device.objects.filter(user=user).first()
+
+            if device:
+                device.send_notification(sender, _, NotificationType.MOMENT_MENTION)
 
 
 m2m_changed.connect(post_save_send_moment_mention, sender=UserMoment.users_tag.through)

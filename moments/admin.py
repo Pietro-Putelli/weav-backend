@@ -47,7 +47,7 @@ class UserMomentAdmin(MomentAdmin):
 
 @admin.register(EventMoment)
 class EventMomentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'business')
+    list_display = ('title', 'business', 'id')
 
 
 @admin.register(EventMomentSlice)

@@ -3,6 +3,7 @@ from django.dispatch import receiver
 
 from chat.serializers import BusinessChatSerializer, ChatSerializer
 from devices.models import Device
+from devices.utils import NotificationType
 from websocket.actions import SocketActions
 from websocket.utils import send_data_to_socket_channel
 from .models import BusinessChatMessage, ChatMessage
@@ -24,14 +25,16 @@ def send_user_chat(instance, created, **_):
         is_chat_sender = chat_sender == msg_sender
         is_chat_receiver = chat_receiver == msg_sender
 
+        serialized = ChatSerializer(chat, context={"user": msg_receiver})
+
+        send_data_to_socket_channel(channel_name, SocketActions.CHAT, serialized.data)
+
         if (is_chat_sender and not chat.receiver_mute) or (
                 is_chat_receiver and not chat.sender_mute):
             device = Device.objects.filter(user=msg_receiver).first()
-            device.send_notification(msg_receiver, message)
 
-        chat = ChatSerializer(chat, context={"user": msg_receiver}).data
-
-        send_data_to_socket_channel(channel_name, SocketActions.CHAT, chat)
+            if device:
+                device.send_notification(msg_receiver, message, NotificationType.MESSAGE)
 
 
 @receiver(post_save, sender=BusinessChatMessage)
@@ -57,9 +60,10 @@ def send_business_chat(instance, created, **_):
 
             msg_sender = chat_user
 
-        device.send_notification(msg_sender, message)
+        serialized = BusinessChatSerializer(
+            chat, context={"is_user": is_receiver_user})
 
-        chat = BusinessChatSerializer(
-            chat, context={"is_user": is_receiver_user}).data
+        send_data_to_socket_channel(channel_name, SocketActions.CHAT, serialized.data)
 
-        send_data_to_socket_channel(channel_name, SocketActions.CHAT, chat)
+        if device:
+            device.send_notification(msg_sender, message, NotificationType.MESSAGE)
