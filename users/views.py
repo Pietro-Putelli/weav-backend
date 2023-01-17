@@ -10,7 +10,7 @@ from profiles.models import UserProfile
 from servicies.caches import cache_instance, get_object_from_cache
 from servicies.choices import LoginChoices
 from throttling.throttlers import UnAuthenticatedThrottle
-from users.email import RegistrationEmail, LoginEmail
+from users.email import RegistrationEmail, LoginEmail, WelcomeEmail
 from users.functions import verify_google_ouath_token
 from users.models import User, AccessToken
 from users.serializers import (
@@ -207,11 +207,7 @@ def check_user_existence(request):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def send_test_email(request):
-    # TokenVerificationEmail(context={"code": "56754682"}).send(to=["pietroputelli80@gmail.com"])
-    picture = generate_profile_placeholder("Pietro Putelli")
-    profile = UserProfile.objects.get(id=25)
-
-    profile.set_picture(picture)
+    RegistrationEmail().send(to=["pietroputelli80@gmail.com"])
     return Response(status=HTTP_200_OK)
 
 

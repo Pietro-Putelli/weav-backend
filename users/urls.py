@@ -35,6 +35,6 @@ urlpatterns = [
     path("public_key/", set_user_public_key, name="public_key"),
     path("exists/", check_user_existence, name="check_user_existence"),
 
-    path("send/", send_test_email),
+    path("test/", send_test_email),
     path("create/", create_user),
 ]
