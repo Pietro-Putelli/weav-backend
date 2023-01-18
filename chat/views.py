@@ -340,7 +340,7 @@ def create_business_chat(request):
     data = request.data
 
     content = data.get("content")
-    business_id = data.get("id")
+    business_id = data.get("business_id")
 
     try:
         business = Business.objects.get(uuid=business_id)
@@ -414,13 +414,13 @@ def test(request):
         EventDiscussionMessage.objects.create(discussion=discussion, sender=sender, content=RANDOM)
 
     elif type == "business":
-        to_user = User.objects.get(id=2)
+        to_user = User.objects.get(id=3)
         business = Business.objects.get(id=1)
-        chat = BusinessChat.objects.get(business=business, user=to_user)
+        chat = BusinessChat.objects.get(id=2)
 
         BusinessChatMessage.objects.create(
             chat=chat,
-            user=to_user,
+            user=None,
             content="Zt+HSIePCtHCXuLFjLlKXl64YUTTHZv1RXf/gMqFtzVrjSA7rVLS4Ct7+e+/h1lj"
         )
     else:

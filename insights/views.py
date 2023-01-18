@@ -1,14 +1,8 @@
-from datetime import datetime
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND
-from rest_framework.views import APIView
+from rest_framework.status import HTTP_200_OK
 
-from business.authentication import BusinessOwnerAuthentication, BusinessOwnerPermission, \
-    business_authentication
-from business.models import Business
-from insights.models import BusinessProfileVisit
+from business.authentication import business_authentication, BusinessAuthenticationAPIView
 from insights.serializers import OverviewInsightsSerializer, \
     LikeInsightsSerializer, SummaryInsightsSerializer, \
     RepostAndShareInsightsSerializer, EventMomentInsightSerializer
@@ -18,9 +12,7 @@ from insights.utils import INSIGHT_TYPES, create_profile_visit_insight, \
 from moments.models import EventMoment
 
 
-class EventMomentInsightsAPIView(APIView):
-    authentication_classes = (BusinessOwnerAuthentication,)
-    permission_classes = (BusinessOwnerPermission,)
+class EventMomentInsightsAPIView(BusinessAuthenticationAPIView):
 
     def get(self, request):
         moment = EventMoment.objects.get_current(request.business)

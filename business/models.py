@@ -14,9 +14,9 @@ allow_blank = {"blank": True, "null": True}
 def get_default_settings():
     return {
         "notifications": {
-            "all": 0,
-            "new_tags": 1,
-            "new_insights": 1,
+            "all": False,
+            "new_tags": True,
+            "new_insights": True,
         }
     }
 

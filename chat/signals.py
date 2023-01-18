@@ -34,7 +34,7 @@ def send_user_chat(instance, created, **_):
             device = Device.objects.filter(user=msg_receiver).first()
 
             if device:
-                device.send_notification(msg_receiver, message, NotificationType.MESSAGE)
+                device.send_notification(msg_sender, message, NotificationType.MESSAGE)
 
 
 @receiver(post_save, sender=BusinessChatMessage)
@@ -66,4 +66,4 @@ def send_business_chat(instance, created, **_):
         send_data_to_socket_channel(channel_name, SocketActions.CHAT, serialized.data)
 
         if device:
-            device.send_notification(msg_sender, message, NotificationType.MESSAGE)
+            device.send_notification(msg_sender, message, NotificationType.BUSINESS_MESSAGE)

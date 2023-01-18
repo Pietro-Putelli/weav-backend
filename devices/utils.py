@@ -15,45 +15,56 @@ from users.models import User
 
 class NotificationType:
     MESSAGE = "message"
+    BUSINESS_MESSAGE = "business_message"
     DISCUSSION_MESSAGE = "discussion_message"
     FRIEND_REQUEST = "friend_request"
     FRIEND_REQUEST_ACCEPTED = "friend_request_accepted"
     MOMENT_MENTION = "moment_mention"
+    MOMENT_BUSINESS_MENTION = "moment_business_mention"
+    NEW_EVENT = "new_event"
 
 
 def format_chat_notification(sender, message):
+    username = sender.username
+
+    user_profile = message.user_profile
+    business_profile = message.business_profile
+
+    user_moment = message.user_moment
+    event_moment_slice = message.event_moment
+
+    reaction = message.reaction
+
+    msg_content = message.content
+
+    content = None
+
+    if msg_content is not None and reaction is None:
+        content = "New message"
+    elif user_profile:
+        content = f"Shared {user_profile.username}'s profile"
+    elif business_profile:
+        content = f"🍸 Shared {business_profile.name}'s profile"
+    elif user_moment:
+        content = f"Shared {user_moment.user.username}'s moment"
+    elif event_moment_slice:
+        content = f"🎉 Shared {event_moment_slice.moment.title} event"
+    elif reaction == ChatMessageReactions.HEY:
+        content = "✌️ Hey"
+    elif reaction == ChatMessageReactions.EMOJI:
+        content = f"{msg_content} Reacted to your moment"
+
+    return username, content
+
+
+def format_business_chat_notification(sender, message):
     is_business = isinstance(sender, Business)
-    content = ""
+    content = "New message"
 
     if is_business:
         username = "🍸 " + sender.name
     else:
-        username = sender.username
-
-        user_profile = message.user_profile
-        business_profile = message.business_profile
-
-        user_moment = message.user_moment
-        event_moment_slice = message.event_moment
-
-        reaction = message.reaction
-
-        msg_content = message.content
-
-        if msg_content is not None and reaction is None:
-            content = "New message"
-        elif user_profile:
-            content = f"Shared {user_profile.username}'s profile"
-        elif business_profile:
-            content = f"🍸 Shared {business_profile.name}'s profile"
-        elif user_moment:
-            content = f"Shared {user_moment.user.username}'s moment"
-        elif event_moment_slice:
-            content = f"🎉 Shared {event_moment_slice.moment.title} event"
-        elif reaction == ChatMessageReactions.HEY:
-            content = "✌️ Hey"
-        elif reaction == ChatMessageReactions.EMOJI:
-            content = f"{msg_content} Reacted to your moment"
+        username = f"[{message.chat.business.name}]: " + sender.username
 
     return username, content
 
@@ -91,16 +102,30 @@ def send_ios_notification(device_token, sender, message, type):
         title, body = format_chat_notification(sender, message)
         payload["chat_id"] = message.chat.id
 
+    elif type == NotificationType.BUSINESS_MESSAGE:
+        title, body = format_business_chat_notification(sender, message)
+        payload["chat_id"] = message.chat.id
+
     elif type == NotificationType.FRIEND_REQUEST:
-        body = f"{sender.username} sent you a friend request"
+        title = sender.username
+        body = "Sent you a friend request"
         payload["user"] = ShortUserProfileSerializer(sender).data
 
     elif type == NotificationType.FRIEND_REQUEST_ACCEPTED:
-        body = f"👋 {sender.username} accepted your friend request"
+        title = sender.username
+        body = "👋 Accepted your friend request"
         payload["user_id"] = sender.uuid
 
     elif type == NotificationType.MOMENT_MENTION:
-        body = f"{sender.username} mentioned you in a moment"
+        title = f"{sender.username}"
+        body = "Mentioned you in a moment"
+        payload["moment_id"] = message.uuid
+
+    elif type == NotificationType.MOMENT_BUSINESS_MENTION:
+        # In this case the message is the moment
+        title = f"[{message.business_tag.name}]: {sender.username}"
+        body = "Mentioned you in a moment"
+        payload["moment_id"] = message.uuid
 
     elif type == NotificationType.DISCUSSION_MESSAGE:
         discussion = message.discussion
@@ -108,6 +133,11 @@ def send_ios_notification(device_token, sender, message, type):
         title = f"💬 {discussion.event.title}"
         body = f"{sender.username}: {message.content}"
         payload["discussion_id"] = discussion.id
+
+    elif type == NotificationType.NEW_EVENT:
+        title = f"🎉 {message.title}"
+        body = f"{sender.name} created a new event"
+        payload["event_id"] = message.uuid
 
     # If the body does not exists, don't send the notification
     if body is None:

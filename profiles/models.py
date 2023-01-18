@@ -1,6 +1,6 @@
 from django.db import models
 
-from core.fields import UniqueNameFileField, ShortUUIDField
+from core.fields import UniqueNameFileField
 from core.models import TimestampModel
 from profiles.managers import UserProfileManager, UserFriendManager, UserFriendRequestManager
 
@@ -9,26 +9,26 @@ def get_default_settings():
     return {
         "language": "en",
         "notifications": {
-            "all": 0,
-            "liked_venues": 1,
-            "new_venues": 1,
-            "chat_message": 1,
-            "moment_tag": 1
+            "all": False,
+            "liked_venues": True,
+            "new_venues": True,
+            "chat_message": True,
+            "moment_tag": True
         },
-        "chance": {
-            "enabled": 0,
-            "today": 0,
-            "event": 0,
-            "sex": None,
-            "interested": None
-        }
+        # "chance": {
+        #     "enabled": 0,
+        #     "today": 0,
+        #     "event": 0,
+        #     "sex": None,
+        #     "interested": None
+        # }
     }
 
 
 allow_blank = {"blank": True, "null": True}
 
 
-def profile_picture_url(instance, *args):
+def profile_picture_url(instance, *_):
     return f"{instance.user.id}/profile.picture.png"
 
 

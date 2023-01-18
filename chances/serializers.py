@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from chances.models import UserChance, EventChance
+from .models import UserChance, EventChance
 from profiles.serializers import ShortUserProfileSerializer
 from moments.serializers import VeryShortEventMomentSerializer
 

@@ -1,5 +1,5 @@
 from django.db import models
-from chances.managers import UserChanceManager
+from .managers import UserChanceManager
 
 
 class Chance(models.Model):

@@ -1,9 +1,8 @@
 from django.db.models import Manager
-from django.db.models.query_utils import Q
 from django.db.models import OuterRef, Subquery
 from django.db.models.expressions import F
+from django.db.models.query_utils import Q
 
-from chances.models import UserChance
 from profiles.models import UserFriend
 
 

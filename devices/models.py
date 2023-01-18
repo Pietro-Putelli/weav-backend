@@ -15,5 +15,5 @@ class Device(models.Model):
 
         if len(self.token) <= 64:
             send_ios_notification(*args)
-        else:
-            send_android_notification(*args)
+        # else:
+        #     send_android_notification(*args)

@@ -1,4 +1,4 @@
-from chances.models import UserChance
+from .models import UserChance
 from chances.serializers import UserChanceSerializer
 
 

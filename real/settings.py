@@ -64,7 +64,7 @@ INSTALLED_APPS = [
     "insights.apps.InsightsConfig",
     "shared.apps.SharedConfig",
     "discussions.apps.DiscussionsConfig",
-    "chances.apps.ChancesConfig",
+    # "chances.apps.ChancesConfig",
     "devices.apps.DevicesConfig",
 ]
 

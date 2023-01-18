@@ -15,7 +15,7 @@ urlpatterns = [
     path("posts/", include("posts.urls")),
     path("insights/", include("insights.urls")),
     path("discussions/", include("discussions.urls")),
-    path("chance/", include("chances.urls")),
+    # path("chance/", include("chances.urls")),
     path("devices/", include("devices.urls")),
 ]
 
