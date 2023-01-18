@@ -1,7 +1,7 @@
 from django.urls.conf import path
 
-from devices.views import send_notification
+from devices.views import logout
 
 urlpatterns = [
-    path("send/", send_notification)
+    path("logout/", logout, name="logout"),
 ]

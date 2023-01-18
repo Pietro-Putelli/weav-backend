@@ -1,5 +1,3 @@
-import uuid
-
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
@@ -46,17 +44,9 @@ class RegistrationWithSerializer(serializers.Serializer):
         email = self.validated_data.get("email")
         name = self.validated_data.get("name")
 
-        password = str(uuid.uuid4())
+        user = User.objects.create_user(email=email, username=username, name=name)
 
-        user = User(email=email, username=username)
-        user.set_password(password)
-        user.save()
-
-        UserProfile.objects.create(user=user, name=name)
-
-        if email is not None:
-            WelcomeEmail(context={"username": username}).send(
-                to=[email])
+        WelcomeEmail(context={"username": username}).send(to=[email])
 
         return user
 

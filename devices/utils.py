@@ -10,7 +10,6 @@ from django.conf import settings
 from business.models import Business
 from chat.models import ChatMessageReactions
 from profiles.serializers import ShortUserProfileSerializer
-from users.models import User
 
 
 class NotificationType:
@@ -183,3 +182,8 @@ def send_android_notification(device_token, user, message):
     )
 
     return response.status_code == 200
+
+
+'''
+    Use to set is_logged when the user logs-in
+'''

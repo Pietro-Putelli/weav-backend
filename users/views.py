@@ -5,12 +5,11 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
 from rest_framework.viewsets import ViewSet
 
-from pp_placehoder.generator import generate_profile_placeholder
-from profiles.models import UserProfile
+from devices.models import Device
 from servicies.caches import cache_instance, get_object_from_cache
 from servicies.choices import LoginChoices
 from throttling.throttlers import UnAuthenticatedThrottle
-from users.email import RegistrationEmail, LoginEmail, WelcomeEmail
+from users.email import RegistrationEmail, LoginEmail
 from users.functions import verify_google_ouath_token
 from users.models import User, AccessToken
 from users.serializers import (
@@ -54,11 +53,11 @@ class RegisterViewSet(ViewSet):
             user_data = get_object_from_cache(email, delete=True)
 
             user = User.objects.create_user(**user_data)
-            user = LoginSerializer(user.profile)
+            serialized = LoginSerializer(user.profile)
 
             registration_token.delete()
 
-            return Response(user.data, status=HTTP_200_OK)
+            return Response(serialized.data, status=HTTP_200_OK)
 
         except AccessToken.DoesNotExist:
             return Response(status=HTTP_404_NOT_FOUND)
@@ -134,6 +133,8 @@ class LoginViewSet(ViewSet):
             user = User.objects.get(email=email)
             serialized = LoginSerializer(user.profile)
 
+            Device.objects.login(user)
+
             registration_token.delete()
 
             return Response(serialized.data, status=HTTP_200_OK)
@@ -153,6 +154,8 @@ class LoginViewSet(ViewSet):
             user = User.objects.get_or_none(email)
 
             if user:
+                Device.objects.login(user)
+                
                 response = LoginSerializer(user.profile).data
         else:
             return Response(status=HTTP_400_BAD_REQUEST)

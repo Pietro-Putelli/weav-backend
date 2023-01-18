@@ -1,12 +1,12 @@
-import uuid
 import secrets
+import uuid
 
+from django.contrib.auth.models import UserManager as DjangoUserManager
 from django.db import models
 
+from devices.models import Device
 from profiles.models import UserProfile
 from servicies.otp import get_otp_code
-from django.contrib.auth.models import UserManager as DjangoUserManager
-
 from users.utils import generate_qrcode
 
 
@@ -59,6 +59,9 @@ class UserManager(DjangoUserManager):
         name = kwargs.pop('name')
 
         user = super().create_user(**kwargs)
+
         UserProfile.objects.create(user=user, name=name)
+
+        Device.objects.update_or_create(user=user)
 
         return user
