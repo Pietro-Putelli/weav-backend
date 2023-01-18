@@ -38,7 +38,7 @@ class EventDiscussionSerializer(serializers.Serializer):
     muted = serializers.SerializerMethodField()
 
     def get_id(self, discussion):
-        return f"discussion.{discussion.id}"
+        return f"discussion_{discussion.id}"
 
     def get_messages(self, discussion):
         messages = EventDiscussionMessage.objects.filter(discussion=discussion)[0:10]

@@ -25,6 +25,7 @@ class NotificationType:
 
 def format_chat_notification(sender, message):
     username = sender.username
+    receiver = message.receiver
 
     user_profile = message.user_profile
     business_profile = message.business_profile
@@ -53,7 +54,10 @@ def format_chat_notification(sender, message):
     elif reaction == ChatMessageReactions.EMOJI:
         content = f"{msg_content} Reacted to your moment"
 
-    return username, content
+    from chat.serializers import ChatSerializer
+    chat = ChatSerializer(message.chat, context={"user": receiver}).data
+
+    return username, content, chat
 
 
 def format_business_chat_notification(sender, message):
@@ -65,7 +69,10 @@ def format_business_chat_notification(sender, message):
     else:
         username = f"[{message.chat.business.name}]: " + sender.username
 
-    return username, content
+    from chat.serializers import BusinessChatSerializer
+    chat = BusinessChatSerializer(message.chat, context={"is_user": not is_business}).data
+
+    return username, content, chat
 
 
 def send_ios_notification(device_token, sender, message, type):
@@ -98,12 +105,12 @@ def send_ios_notification(device_token, sender, message, type):
     payload = {}
 
     if type == NotificationType.MESSAGE:
-        title, body = format_chat_notification(sender, message)
-        payload["chat_id"] = message.chat.id
+        title, body, chat = format_chat_notification(sender, message)
+        payload["chat"] = chat
 
     elif type == NotificationType.BUSINESS_MESSAGE:
-        title, body = format_business_chat_notification(sender, message)
-        payload["chat_id"] = message.chat.id
+        title, body, chat = format_business_chat_notification(sender, message)
+        payload["chat"] = chat
 
     elif type == NotificationType.FRIEND_REQUEST:
         title = sender.username

@@ -25,12 +25,14 @@ def send_user_chat(instance, created, **_):
         is_chat_sender = chat_sender == msg_sender
         is_chat_receiver = chat_receiver == msg_sender
 
+        is_reaction = message.reaction is not None
+
         serialized = ChatSerializer(chat, context={"user": msg_receiver})
 
         send_data_to_socket_channel(channel_name, SocketActions.CHAT, serialized.data)
 
-        if (is_chat_sender and not chat.receiver_mute) or (
-                is_chat_receiver and not chat.sender_mute):
+        if ((is_chat_sender and not chat.receiver_mute) or (
+                is_chat_receiver and not chat.sender_mute) and not is_reaction):
             device = Device.objects.filter(user=msg_receiver).first()
 
             if device:

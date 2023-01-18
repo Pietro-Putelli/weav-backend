@@ -80,7 +80,7 @@ class ChatSerializer(serializers.Serializer):
     is_active = serializers.BooleanField()
 
     def get_id(self, chat):
-        return f"chat.{chat.id}"
+        return f"user_{chat.id}"
 
     def get_receiver(self, chat):
         user = self.context.get("user")
@@ -118,7 +118,7 @@ class BusinessChatMessageSerializer(serializers.Serializer):
     is_user = serializers.SerializerMethodField()
 
     def get_id(self, chat):
-        return f"business_chat.{chat.id}"
+        return f"business_{chat.id}"
 
     def get_is_user(self, instance):
         return instance.user is None
