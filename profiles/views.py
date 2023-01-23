@@ -7,7 +7,6 @@ from rest_framework.views import APIView
 
 from core.authentication import AuthenticationMixinAPIView
 from core.querylimits import QueryLimits
-from devices.models import Device
 from moments.models import UserMoment
 from moments.serializers import UserMomentSerializer
 from pp_placehoder.generator import generate_profile_placeholder
@@ -149,21 +148,23 @@ class BlockUser(APIView):
         users = ShortUserProfileSerializer(users, many=True).data
         return Response(users, status=HTTP_200_OK)
 
-    def post(self, request):
-        data = request.data
-
-        uuid = request.query_params.get("id")
-        mode = data.get("mode")
+    def put(self, request):
+        uuid = request.data.get("id")
 
         my_profile = request.user.profile
-        user = User.objects.get(uuid=uuid)
+        blocked_users = my_profile.blocked_users
 
-        if mode == "block":
-            my_profile.blocked_users.add(user)
+        try:
+            user = User.objects.get(uuid=uuid)
+        except User.DoesNotExist:
+            return Response(status=HTTP_404_NOT_FOUND)
+
+        # I'm blocking the user
+        if user not in blocked_users.all():
+            blocked_users.add(user)
             handle_blocked_user(request.user, user)
-
-        if mode == "unblock":
-            my_profile.blocked_users.remove(user)
+        else:
+            blocked_users.remove(user)
 
         return Response(status=HTTP_200_OK)
 
@@ -173,27 +174,18 @@ def search_users(request):
     params = request.query_params
 
     user = request.user
+    blocked_users = user.profile.blocked_users.all()
 
     value = params.get("value")
     offset = cast_to_int(params.get("offset"))
     up_offset = offset + QueryLimits.SEARCH_USERS
 
     users = UserProfile.objects.filter(
-        Q(user__username__icontains=value) & ~Q(blocked_users__in=[user]) & ~Q(user=user))[
-            offset: up_offset]
+        Q(user__username__icontains=value) & ~Q(blocked_users__in=[user]) & ~Q(
+            user=user)).exclude(user__in=blocked_users)[offset: up_offset]
 
     users = ShortProfileSerializer(users, many=True).data
     return Response(users, status=HTTP_200_OK)
-
-
-@api_view(["PUT"])
-def set_device_token(request):
-    data = request.data
-    token = data.get("token")
-
-    Device.objects.update_or_create(user=request.user, token=token)
-
-    return Response(status=HTTP_200_OK)
 
 
 class UserFeedAPIView(APIView):

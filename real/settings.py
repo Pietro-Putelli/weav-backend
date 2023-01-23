@@ -113,7 +113,7 @@ REST_FRAMEWORK = {
         'anon': '100/day',
         "user": "1000/day",
         "unauthenticated_user": "15/min",
-        "business": "1000/day"
+        "mixin": "1000/day"
     },
 }
 

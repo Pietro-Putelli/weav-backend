@@ -5,12 +5,12 @@ from rest_framework.decorators import (
     authentication_classes,
     throttle_classes,
 )
-from rest_framework.throttling import UserRateThrottle
 from rest_framework.views import APIView
+from rest_framework.viewsets import ViewSet
 
 from business.models import BusinessToken
 from core.decorators import composed
-from throttling.throttlers import BusinessRateThrottle
+from throttling.throttlers import MixinRateThrottle
 
 
 class UserOrBusinessAuthentication(authentication.BaseAuthentication):
@@ -40,7 +40,6 @@ class UserOrBusinessAuthentication(authentication.BaseAuthentication):
         raise exceptions.AuthenticationFailed('No such user or business')
 
 
-
 class UserOrBusinessPermission(permissions.BasePermission):
     def has_permission(self, request, view):
         raw_token = request.META.get('HTTP_AUTHORIZATION')
@@ -63,14 +62,18 @@ class UserOrBusinessPermission(permissions.BasePermission):
         return False
 
 
-
 authentication_mixin = composed(permission_classes([UserOrBusinessPermission]),
                                 authentication_classes([UserOrBusinessAuthentication]),
-                                throttle_classes([UserRateThrottle, BusinessRateThrottle]))
-
+                                throttle_classes([MixinRateThrottle]))
 
 
 class AuthenticationMixinAPIView(APIView):
     permission_classes = (UserOrBusinessPermission,)
     authentication_classes = (UserOrBusinessAuthentication,)
-    throttle_classes = (UserRateThrottle, BusinessRateThrottle)
+    throttle_classes = (MixinRateThrottle,)
+
+
+class AuthenticationMixinViewSet(ViewSet):
+    permission_classes = (UserOrBusinessPermission,)
+    authentication_classes = (UserOrBusinessAuthentication,)
+    throttle_classes = (MixinRateThrottle,)

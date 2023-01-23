@@ -65,7 +65,7 @@ class UserChatConsumer(ChatConsumer):
         try:
             if chat_type == ChatTypes.USER_TO_USER:
                 message = create_user_message(message, self.user)
-            elif chat_type == ChatTypes.USER_TO_BUSINESS:
+            elif chat_type == ChatTypes.BUSINESS:
                 message = create_business_message(message)
             else:
                 message = create_discussion_message(message, self.user)

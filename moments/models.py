@@ -52,8 +52,8 @@ class UserMoment(TimestampModel, AbstractTagsModel):
     # IMAGE_HEIGHT / IMAGE_WIDTH
     ratio = models.FloatField(null=True, blank=True)
 
-    event_moment = models.ForeignKey("moments.EventMomentSlice", on_delete=CASCADE,
-                                     **allow_blank)
+    event = models.ForeignKey("moments.EventMomentSlice", on_delete=CASCADE,
+                              **allow_blank)
 
     end_at = models.DateTimeField(default=None)
 

@@ -99,7 +99,10 @@ class ChatManager(Manager):
 
     # Remove chat when user block another user
     def remove_blocked(self, *args):
-        self.get_chat(*args).delete()
+        chats = self.get_chat(*args)
+
+        if chats is not None:
+            chats.delete()
 
 
 class BusinessChatMessageManager(MessageManager):

@@ -16,7 +16,8 @@ from chat.models import (BusinessChat, BusinessChatMessage, Chat, ChatMessage,
 from chat.serializers import (BusinessChatMessageSerializer,
                               BusinessChatSerializer, ChatMessageSerializer,
                               ChatSerializer)
-from core.authentication import authentication_mixin, AuthenticationMixinAPIView
+from core.authentication import authentication_mixin, AuthenticationMixinAPIView, \
+    AuthenticationMixinViewSet
 from discussions.models import EventDiscussion, EventDiscussionMessage
 from insights.utils import add_share_to_event, add_share_to_business
 from moments.models import EventMomentSlice, UserMoment
@@ -107,7 +108,7 @@ class ChatView(AuthenticationMixinAPIView):
 
 
 # Handle messages for both user and business
-class MessagesViewSet(ViewSet):
+class MessagesViewSet(AuthenticationMixinViewSet):
     def _get_params(self, request):
         params = request.query_params
 
@@ -191,7 +192,6 @@ def mute_chat(request):
     data = request.data
 
     chat_id = data.get("id")
-    type = data.get("type")
 
     try:
         chat = Chat.objects.get(id=chat_id)
@@ -234,9 +234,9 @@ class ShareViewSet(ViewSet):
                 moment = UserMoment.objects.get(uuid=moment_id)
 
                 for receiver in receivers:
-                    chat = Chat.objects.get_or_create(user, receiver.user)
-                    ChatMessage.objects.create(chat=chat, sender=user, receiver=receiver.user,
-                                               user_moment=moment)
+                    chat = Chat.objects.get_or_create(user, receiver)
+                    ChatMessage.objects.create(chat=chat, sender=user, receiver=receiver,
+                                               moment=moment)
                     chats.append(chat)
 
             except UserMoment.DoesNotExist:
@@ -250,7 +250,7 @@ class ShareViewSet(ViewSet):
                 for receiver in receivers:
                     chat = Chat.objects.get_or_create(user, receiver)
                     ChatMessage.objects.create(chat=chat, sender=user, receiver=receiver,
-                                               event_moment=slice)
+                                               event=slice)
                     chats.append(chat)
 
             except EventMomentSlice.DoesNotExist:
@@ -273,7 +273,7 @@ class ShareViewSet(ViewSet):
             profile_model = Business
 
         try:
-            profile = profile_model.objects.get(id=profile_id)
+            profile = profile_model.objects.get(uuid=profile_id)
             data = {f"{mode}_profile": profile}
 
             if mode == "business":
@@ -321,10 +321,10 @@ class ShareViewSet(ViewSet):
                 if count == 0:
                     ChatMessage.objects.create(**shared, reaction=type)
             elif type is None:
-                ChatMessage.objects.create(**shared, user_moment=moment)
+                ChatMessage.objects.create(**shared, moment=moment)
                 ChatMessage.objects.create(**shared, content=content)
             else:
-                ChatMessage.objects.create(**shared, user_moment=moment, content=content,
+                ChatMessage.objects.create(**shared, moment=moment, content=content,
                                            reaction=type)
 
             chat = ChatSerializer(chat, context={"user": user})
@@ -369,7 +369,7 @@ def get_my_business_chats(request):
 @api_view(["GET"])
 def get_chat_for_business(request):
     params = request.query_params
-    business_id = params.get("id")
+    business_id = params.get("business_id")
 
     chat = BusinessChat.objects.filter(user=request.user, business__uuid=business_id).first()
 
@@ -414,14 +414,14 @@ def test(request):
         EventDiscussionMessage.objects.create(discussion=discussion, sender=sender, content=RANDOM)
 
     elif type == "business":
-        to_user = User.objects.get(id=3)
-        business = Business.objects.get(id=1)
-        chat = BusinessChat.objects.get(id=2)
+        to_user = User.objects.get(id=5)
+        business = Business.objects.get(id=3)
+        chat = BusinessChat.objects.get(id=3)
 
         BusinessChatMessage.objects.create(
             chat=chat,
-            user=None,
-            content="Zt+HSIePCtHCXuLFjLlKXl64YUTTHZv1RXf/gMqFtzVrjSA7rVLS4Ct7+e+/h1lj"
+            user=to_user,
+            content="IR/uTkB9w3eFNL6FYCyEHMdDewSFAh4+Ml8Q6FvzkkIFPDilVGENXyBqWfq7HoU4UIo="
         )
     else:
         my_user = User.objects.get(id=5)

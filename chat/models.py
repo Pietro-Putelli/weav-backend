@@ -28,9 +28,9 @@ class Message(TimestampModel):
     user_profile = models.ForeignKey("users.User", db_index=False, **foreignkey_params)
     business_profile = models.ForeignKey("business.Business", db_index=False, **foreignkey_params)
 
-    user_moment = models.ForeignKey("moments.UserMoment", db_index=False, **foreignkey_params)
-    event_moment = models.ForeignKey("moments.EventMomentSlice", db_index=False,
-                                     **foreignkey_params)
+    moment = models.ForeignKey("moments.UserMoment", db_index=False, **foreignkey_params)
+    event = models.ForeignKey("moments.EventMomentSlice", db_index=False,
+                              **foreignkey_params)
 
     class Meta:
         abstract = True

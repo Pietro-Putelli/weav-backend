@@ -21,6 +21,7 @@ class NotificationType:
     MOMENT_MENTION = "moment_mention"
     MOMENT_BUSINESS_MENTION = "moment_business_mention"
     NEW_EVENT = "new_event"
+    EVENT_REPOST = "event_repost"
 
 
 def format_chat_notification(sender, message):
@@ -30,8 +31,8 @@ def format_chat_notification(sender, message):
     user_profile = message.user_profile
     business_profile = message.business_profile
 
-    user_moment = message.user_moment
-    event_moment_slice = message.event_moment
+    user_moment = message.moment
+    event_moment_slice = message.event
 
     reaction = message.reaction
 
@@ -70,7 +71,7 @@ def format_business_chat_notification(sender, message):
         username = f"[{message.chat.business.name}]: " + sender.username
 
     from chat.serializers import BusinessChatSerializer
-    chat = BusinessChatSerializer(message.chat, context={"is_user": not is_business}).data
+    chat = BusinessChatSerializer(message.chat, context={"is_user": is_business}).data
 
     return username, content, chat
 
@@ -97,7 +98,6 @@ def send_ios_notification(device_token, sender, message, type):
         "Content-Type": "application/json",
         "apns-topic": "com.app.weav",
         "Authorization": f"bearer {token}",
-        # "apns-push-type": "background"
     }
 
     title, body = "Weav", None
@@ -144,6 +144,10 @@ def send_ios_notification(device_token, sender, message, type):
         title = f"🎉 {message.title}"
         body = f"{sender.name} created a new event"
         payload["event_id"] = message.uuid
+
+    elif type == NotificationType.EVENT_REPOST:
+        title = f"[{message.moment.business.name}]: {sender.username}"
+        body = "Reposted your event"
 
     # If the body does not exists, don't send the notification
     if body is None:

@@ -22,8 +22,8 @@ class MessageSerializer(serializers.Serializer):
     seen = serializers.BooleanField()
     reply = serializers.SerializerMethodField()
 
-    user_moment = UserMomentSerializer()
-    event_moment = serializers.SerializerMethodField()
+    moment = UserMomentSerializer()
+    event = serializers.SerializerMethodField()
 
     user_profile = ShortUserProfileSerializer()
     business_profile = ShortBusinessSerializer()
@@ -48,8 +48,8 @@ class MessageSerializer(serializers.Serializer):
             return ShortBusinessSerializer(instance.business_profile).data
         return None
 
-    def get_event_moment(self, message):
-        slice = message.event_moment
+    def get_event(self, message):
+        slice = message.event
         if slice is not None:
             moment = EventMomentSerializer(slice.moment, context={"selected": slice.id})
             return moment.data
@@ -111,21 +111,18 @@ class ChatSerializer(serializers.Serializer):
 
 
 class BusinessChatMessageSerializer(serializers.Serializer):
-    id = serializers.SerializerMethodField()
+    id = serializers.IntegerField()
     created_at = serializers.CharField()
     content = serializers.CharField()
     seen = serializers.BooleanField()
     is_user = serializers.SerializerMethodField()
 
-    def get_id(self, chat):
-        return f"business_{chat.id}"
-
-    def get_is_user(self, instance):
-        return instance.user is None
+    def get_is_user(self, message):
+        return message.user is None
 
 
 class BusinessChatSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
+    id = serializers.SerializerMethodField()
     user = serializers.SerializerMethodField()
     business = serializers.SerializerMethodField()
     messages = serializers.SerializerMethodField()
@@ -134,6 +131,9 @@ class BusinessChatSerializer(serializers.Serializer):
     # Used to know who wants to retrieve the chats, user or business.
     def is_user(self):
         return self.context.get("is_user") is True
+
+    def get_id(self, chat):
+        return f"business_{chat.id}"
 
     def get_user(self, instance):
         if self.is_user():

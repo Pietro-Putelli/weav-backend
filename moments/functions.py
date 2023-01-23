@@ -8,7 +8,7 @@ from moments.models import EventMoment, UserMoment, EventMomentSlice
 from servicies.date import date_from
 from servicies.utils import get_point_coordinate, cast_to_int
 
-MAX_MOMENT_RADIUS = 1000
+MAX_MOMENT_RADIUS = 10000
 
 
 def parse_user_data(request):

@@ -84,7 +84,6 @@ class UpdateBusinessSerializer(serializers.ModelSerializer):
 
 class BusinessMeSerializer(serializers.Serializer):
     liked = serializers.SerializerMethodField()
-    distance = serializers.SerializerMethodField()
 
     def __init__(self, instance, **kwargs):
         super().__init__(instance, **kwargs)
@@ -95,14 +94,6 @@ class BusinessMeSerializer(serializers.Serializer):
 
     def get_liked(self, business):
         return BusinessLike.objects.filter(business=business, user=self.user).exists()
-
-    def get_distance(self, business):
-        if business.location is None:
-            return None
-
-        coordinate = self.request_data.get("coordinate")
-        position = get_point_coordinate(coordinate)
-        return get_distance_from(business.location.coordinate, position)
 
 
 SHORT_BUSINESS_SERIALIZER_FIELDS = ("id", "name", "cover_source", "city", "type")

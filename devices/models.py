@@ -15,11 +15,11 @@ class Device(models.Model):
 
     def send_notification(self, sender, message, type):
         # If the device is not logged, we don't send the notification
-        
+
         if self.is_logged:
             args = (self.token, sender, message, type)
 
-            if len(self.token) <= 64:
+            if len(self.token) <= 80:
                 send_ios_notification(*args)
             # else:
             #     send_android_notification(*args)

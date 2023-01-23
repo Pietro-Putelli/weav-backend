@@ -64,7 +64,7 @@ class CreateUserMomentSerializer(serializers.ModelSerializer, CreateTagSerialize
 
     def save(self, user, source):
         location_data = self.validated_data.pop("location")
-        location = Location.objects.create_with_place_id(**location_data)
+        location = Location.objects.create(**location_data)
 
         users_tag = pop_or_none("users_tag", self.validated_data)
         business_tag = pop_or_none("business_tag", self.validated_data)
@@ -85,7 +85,7 @@ class CreateUserMomentSerializer(serializers.ModelSerializer, CreateTagSerialize
             add_repost_to_business(user, business_tag)
 
         moment = UserMoment.objects.create(user=user, location=location, business_tag=business_tag,
-                                           source=source, event_moment=slice,
+                                           source=source, event=slice,
                                            location_tag=location_tag, end_at=end_at,
                                            **self.validated_data)
 
@@ -150,7 +150,7 @@ class ShortEventMomentSliceSerializer(serializers.ModelSerializer):
 
 class UserMomentSerializer(serializers.ModelSerializer, MomentTagsSerializer, MomentIdSerializer):
     user = ShortUserProfileChatSerializer()
-    event_moment = ShortEventMomentSliceSerializer()
+    event = ShortEventMomentSliceSerializer()
     has_custom_source = serializers.SerializerMethodField()
 
     class Meta:

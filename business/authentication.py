@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 
 from business.models import BusinessToken
 from core.decorators import composed
-from throttling.throttlers import BusinessRateThrottle
+from throttling.throttlers import MixinRateThrottle
 
 
 class BusinessOwnerAuthentication(authentication.BaseAuthentication):
@@ -44,10 +44,10 @@ class BusinessOwnerPermission(permissions.BasePermission):
 
 business_authentication = composed(permission_classes([BusinessOwnerPermission]),
                                    authentication_classes([BusinessOwnerAuthentication]),
-                                   throttle_classes([BusinessRateThrottle]))
+                                   throttle_classes([MixinRateThrottle]))
 
 
 class BusinessAuthenticationAPIView(APIView):
     permission_classes = (BusinessOwnerPermission,)
     authentication_classes = (BusinessOwnerAuthentication,)
-    throttle_classes = (BusinessRateThrottle,)
+    throttle_classes = (MixinRateThrottle,)

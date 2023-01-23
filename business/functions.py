@@ -37,7 +37,7 @@ def get_businesses_nearby(data):
         queryset = queryset.filter(
             location__coordinate__distance_lte=(
                 user_position,
-                MeasureDistance(m=10000),
+                MeasureDistance(m=100000),
             ),
         ).annotate(
             distance=GeoDistance("location__coordinate", user_position)

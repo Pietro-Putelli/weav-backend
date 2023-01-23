@@ -1,5 +1,7 @@
 from rest_framework.throttling import SimpleRateThrottle
 
+from users.models import User
+
 
 class UnAuthenticatedThrottle(SimpleRateThrottle):
     scope = 'unauthenticated_user'
@@ -9,13 +11,14 @@ class UnAuthenticatedThrottle(SimpleRateThrottle):
             'scope': self.scope,
             'ident': self.get_ident(request)}
 
-class BusinessRateThrottle(SimpleRateThrottle):
-    scope = "business"
+
+class MixinRateThrottle(SimpleRateThrottle):
+    scope = "mixin"
 
     def get_cache_key(self, request, view):
         user = request.user
 
-        if user is not None and user.is_authenticated:
+        if isinstance(user, User) and user.is_authenticated:
             ident = request.user.pk
         elif hasattr(request, "business"):
             ident = request.business.pk

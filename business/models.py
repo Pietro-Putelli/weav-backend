@@ -17,6 +17,7 @@ def get_default_settings():
             "all": False,
             "new_tags": True,
             "new_insights": True,
+            "event_repost": True,
         }
     }
 

@@ -7,10 +7,17 @@ from .widgets import LatLongWidget
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ("id", "place_id", "address")
+    list_display = ("place_id", "address", "id", "has_coordinate")
     formfield_overrides = {
         geomodels.PointField: {"widget": LatLongWidget},
     }
+
+    @admin.display(
+        boolean=True,
+        description='has coordinate',
+    )
+    def has_coordinate(self, location):
+        return location.coordinate is not None
 
 
 @admin.register(BusinessCategory)
