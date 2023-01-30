@@ -64,7 +64,7 @@ class PhoneSerializer(serializers.Serializer):
     def get_code(self, instance):
         if not hasattr(instance, "country_code"):
             return None
-        return str(instance.country_code)
+        return "+" + str(instance.country_code)
 
     def get_number(self, instance):
         if not hasattr(instance, "national_number"):
@@ -73,15 +73,12 @@ class PhoneSerializer(serializers.Serializer):
 
 
 class CreatePhoneSerializer(serializers.Serializer):
-    code = serializers.CharField()
+    code = serializers.CharField(allow_blank=True)
     number = serializers.CharField(allow_blank=True)
 
     def validate(self, instance):
         code = instance.get("code")
         number = instance.get("number")
-
-        if number == "":
-            return None
 
         return f"{code}{number}"
 

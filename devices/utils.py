@@ -9,6 +9,7 @@ from django.conf import settings
 
 from business.models import Business
 from chat.models import ChatMessageReactions
+from discussions.serializers import EventDiscussionSerializer
 from profiles.serializers import ShortUserProfileSerializer
 
 
@@ -138,16 +139,12 @@ def send_ios_notification(device_token, sender, message, type):
 
         title = f"💬 {discussion.event.title}"
         body = f"{sender.username}: {message.content}"
-        payload["discussion_id"] = discussion.id
+        payload["chat"] = EventDiscussionSerializer(discussion).data
 
     elif type == NotificationType.NEW_EVENT:
         title = f"🎉 {message.title}"
         body = f"{sender.name} created a new event"
         payload["event_id"] = message.uuid
-
-    elif type == NotificationType.EVENT_REPOST:
-        title = f"[{message.moment.business.name}]: {sender.username}"
-        body = "Reposted your event"
 
     # If the body does not exists, don't send the notification
     if body is None:

@@ -1,9 +1,9 @@
 from itertools import chain
 
+from business.models import Business
 from core.querylimits import QueryLimits
 from discussions.models import EventDiscussion
 from discussions.serializers import EventDiscussionSerializer
-from profiles.models import UserProfile
 from users.models import User
 from .models import BusinessChat, Chat, ChatMessage
 from .serializers import BusinessChatSerializer, ChatSerializer
@@ -16,9 +16,16 @@ def last_update_key(chat):
 def get_my_chats(user, offset=0):
     up_offset = offset + QueryLimits.CHAT_LIST
 
-    user_chats = Chat.objects.get_my_chats(user)
+    is_business = isinstance(user, Business)
+
     business_chats = BusinessChat.objects.filter(user=user)
-    discussions = EventDiscussion.objects.filter(members__in=[user])
+
+    user_chats = []
+    discussions = []
+    
+    if not is_business:
+        user_chats = Chat.objects.get_my_chats(user)
+        discussions = EventDiscussion.objects.filter(members__in=[user])
 
     all_chats = chain(user_chats, business_chats, discussions)
     ordered_chats = sorted(all_chats, key=last_update_key)

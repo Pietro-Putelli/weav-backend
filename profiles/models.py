@@ -10,18 +10,11 @@ def get_default_settings():
         "language": "en",
         "notifications": {
             "all": False,
-            "liked_venues": True,
+            "new_event": True,
             "new_venues": True,
             "chat_message": True,
-            "moment_tag": True
+            "moment_mention": True
         },
-        # "chance": {
-        #     "enabled": 0,
-        #     "today": 0,
-        #     "event": 0,
-        #     "sex": None,
-        #     "interested": None
-        # }
     }
 
 

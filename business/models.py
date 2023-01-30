@@ -15,9 +15,8 @@ def get_default_settings():
     return {
         "notifications": {
             "all": False,
-            "new_tags": True,
-            "new_insights": True,
-            "event_repost": True,
+            "new_insight": True,
+            "chat_message": True
         }
     }
 
@@ -46,7 +45,7 @@ class Business(TimestampModel):
     location = models.ForeignKey("shared.Location", related_name="%(app_label)s_%(""class)s_likes",
                                  db_index=False, on_delete=models.CASCADE, **allow_blank)
 
-    phone = PhoneNumberField(default=None, **allow_blank)
+    phone = PhoneNumberField(default=None, **allow_blank, validators=[])
 
     timetable = models.JSONField(**allow_blank)
     description = models.TextField(max_length=256, **allow_blank)

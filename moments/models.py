@@ -75,6 +75,8 @@ class EventMoment(TimestampModel):
 
     date = models.DateField(default=None)
     time = models.TimeField(default=None)
+    end_time = models.TimeField(default=None)
+
     title = models.CharField(max_length=32, default=None)
 
     participants = models.ManyToManyField("users.User", blank=True)

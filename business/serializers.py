@@ -1,21 +1,19 @@
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 
 from business.functions import get_business_rank_value
 from business.models import Business, BusinessToken
 from insights.models import BusinessLike
 from posts.models import BusinessPost
-from servicies.geo import get_distance_from
-from servicies.utils import get_point_coordinate, update_for_object, pop_or_none
-from shared.models import Amenity, Location, MiddleSource, BusinessCategory
+from servicies.images import crop_image_white_line
+from servicies.utils import update_for_object, pop_or_none
+from shared.models import Location
 from shared.serializers import (CreateLocationSerializer,
-                                CreatePhoneSerializer, LocationSerializer,
+                                LocationSerializer,
                                 PhoneSerializer, CreateCoordinateSerializer,
                                 StaticFeatureSerializer)
 
 
 class CreateBusinessSerializer(serializers.ModelSerializer):
-    phone = CreatePhoneSerializer(required=False)
     location = CreateLocationSerializer(required=False)
 
     class Meta:
@@ -29,9 +27,11 @@ class CreateBusinessSerializer(serializers.ModelSerializer):
         categories = pop_or_none("categories", self.validated_data)
         amenities = pop_or_none("amenities", self.validated_data)
 
+        new_source = crop_image_white_line(source)
+
         business = Business.objects.create(
             owner=user,
-            cover_source=source,
+            cover_source=new_source,
             **self.validated_data
         )
 
@@ -48,7 +48,6 @@ class CreateBusinessSerializer(serializers.ModelSerializer):
 
 
 class UpdateBusinessSerializer(serializers.ModelSerializer):
-    phone = CreatePhoneSerializer(required=False)
     location = CreateLocationSerializer(required=False)
 
     class Meta:
@@ -65,7 +64,7 @@ class UpdateBusinessSerializer(serializers.ModelSerializer):
             business.location.update(location)
 
         if source is not None:
-            business.cover_source = source
+            business.cover_source = crop_image_white_line(source)
 
         if categories is not None:
             business.categories.clear()

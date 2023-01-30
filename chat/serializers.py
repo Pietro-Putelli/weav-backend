@@ -127,6 +127,7 @@ class BusinessChatSerializer(serializers.Serializer):
     business = serializers.SerializerMethodField()
     messages = serializers.SerializerMethodField()
     unread_count = serializers.SerializerMethodField()
+    muted = serializers.SerializerMethodField()
 
     # Used to know who wants to retrieve the chats, user or business.
     def is_user(self):
@@ -156,3 +157,8 @@ class BusinessChatSerializer(serializers.Serializer):
             return queryset.filter(seen=False).exclude(user=None).count()
 
         return queryset.filter(user=None, seen=False).count()
+
+    def get_muted(self, chat):
+        if self.is_user():
+            return chat.sender_mute
+        return chat.receiver_mute

@@ -129,7 +129,7 @@ class MomentTagsSerializer(serializers.Serializer):
 class EventMomentSliceSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventMomentSlice
-        exclude = ("moment",)
+        exclude = ("moment", "updated_at")
 
 
 # Use this in case you get only one slice, so you can know the business.
@@ -183,21 +183,23 @@ class VeryShortEventMomentSerializer(serializers.ModelSerializer, MomentIdSerial
 
 class ShortEventMomentSerializer(EventMomentSlicesSerializer, MomentIdSerializer):
     title = serializers.CharField()
+    date = serializers.CharField()
+    time = serializers.CharField()
     business = ShortBusinessSerializer()
 
 
-class EventMomentDetailSerializer(serializers.ModelSerializer):
+class EventMomentDetailSerializer(ShortEventMomentSerializer, serializers.ModelSerializer):
     location = serializers.SerializerMethodField()
     participants = serializers.SerializerMethodField()
     is_going = serializers.SerializerMethodField()
     participants_count = serializers.SerializerMethodField()
-    business = ShortChatBusinessSerializer()
 
     class Meta:
         model = EventMoment
         fields = (
-            "business", "date", "time", "participants", "guests", "price", "instagram", "website",
-            "ticket", "description", "location", "is_going", "participants_count")
+            "title", "business", "date", "time", "participants", "guests", "price", "instagram",
+            "website", "ticket", "description", "location", "is_going", "participants_count",
+            "slices", "id", "end_time")
 
     def get_location(self, event):
         location = event.business.location
@@ -210,7 +212,7 @@ class EventMomentDetailSerializer(serializers.ModelSerializer):
     def get_participants(self, event):
         user = self.context.get("user")
 
-        participants = get_event_participants(event.id, user, 0, 4)
+        participants = get_event_participants(event.uuid, user, 0, 4)
         return participants
 
     def get_is_going(self, event):

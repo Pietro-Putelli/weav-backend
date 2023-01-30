@@ -45,12 +45,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.gis",
     "rest_framework",
-    "phonenumber_field",
     "rest_framework.authtoken",
     "django_extensions",
     "leaflet",
     "channels",
     "django_cleanup.apps.CleanupConfig",
+    "phonenumber_field",
 
     # My Apps
 

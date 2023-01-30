@@ -4,11 +4,10 @@ from django.db.models import OuterRef
 from django.db.models.query_utils import Q
 from django.utils import timezone
 
+from core.constants import SEARCH_RADIUS_NOT_IN_CITY
 from moments.models import EventMoment, UserMoment, EventMomentSlice
 from servicies.date import date_from
 from servicies.utils import get_point_coordinate, cast_to_int
-
-MAX_MOMENT_RADIUS = 10000
 
 
 def parse_user_data(request):
@@ -42,7 +41,7 @@ def get_user_moments_by(request):
     if coordinate:
         queryset = queryset.filter(
             location__coordinate__distance_lte=(
-                coordinate, MeasureDistance(m=MAX_MOMENT_RADIUS)
+                coordinate, MeasureDistance(m=SEARCH_RADIUS_NOT_IN_CITY)
             )
         ).annotate(
             distance=GeoDistance("location__coordinate", coordinate)
@@ -66,7 +65,7 @@ def get_event_moments_by(request):
         queryset = queryset.filter(
             business__location__coordinate__distance_lte=(
                 coordinate,
-                MeasureDistance(m=MAX_MOMENT_RADIUS),
+                MeasureDistance(m=SEARCH_RADIUS_NOT_IN_CITY),
             ),
         ).annotate(
             distance=GeoDistance("location__coordinate", coordinate)
@@ -75,6 +74,7 @@ def get_event_moments_by(request):
     subquery = EventMomentSlice.objects.filter(moment=OuterRef("pk"))
 
     queryset = queryset.annotate(
-        last_slice_created_at=subquery.values("created_at")[:1]).order_by("-last_slice_created_at")
+        last_slice_created_at=subquery.values("created_at")[:1]).order_by("date",
+                                                                          "-last_slice_created_at")
 
     return queryset[offset:up_offset]

@@ -5,10 +5,12 @@ from .models import BusinessPostSlice, UserPostSlice
 
 FIELDS = ("id", "source", "title", "content", "created_at")
 
+allow_blank = {"allow_blank": True, "allow_null": True}
+
 
 class CreatePostSerializer(serializers.Serializer):
-    title = serializers.CharField(required=False, allow_null=True)
-    content = serializers.CharField(required=False, allow_null=True)
+    title = serializers.CharField(required=False, **allow_blank)
+    content = serializers.CharField(required=False, **allow_blank)
 
     def _get_model(self):
         context_model = self.context.get("model")

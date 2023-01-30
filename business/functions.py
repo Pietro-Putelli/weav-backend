@@ -4,6 +4,7 @@ from django.db.models import Count
 from django.db.models.query_utils import Q
 
 from business.models import Business
+from core.constants import SEARCH_RADIUS_NOT_IN_CITY
 from core.querylimits import QueryLimits
 from servicies.querylimits import SEARCH_BUSINESS_LIMIT
 
@@ -22,7 +23,7 @@ def get_businesses_nearby(data):
     offset = data.get("offset")
     up_offset = offset + QueryLimits.BUSINESS_LIST
 
-    queryset = Business.objects.filter(is_approved=True)
+    queryset = Business.objects.filter(Q(is_approved=True) & ~Q(location=None))
 
     if len(categories) > 0 or len(amenities) > 0:
         filter_query = Q(categories__id__in=categories) | Q(amenities__id__in=amenities) | Q(
@@ -37,7 +38,7 @@ def get_businesses_nearby(data):
         queryset = queryset.filter(
             location__coordinate__distance_lte=(
                 user_position,
-                MeasureDistance(m=100000),
+                MeasureDistance(m=SEARCH_RADIUS_NOT_IN_CITY),
             ),
         ).annotate(
             distance=GeoDistance("location__coordinate", user_position)

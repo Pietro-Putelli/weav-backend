@@ -61,9 +61,6 @@ class ProfileAPIView(AuthenticationMixinAPIView):
                 user.profile.set_interests(interests)
         elif update_key == "username":
             User.objects.filter(uuid=user.uuid).update(**data)
-        elif update_key == "phone":
-            phone_data = data.get("phone")
-            serializer = CreatePhoneSerializer(data=phone_data)
             if serializer.is_valid():
                 UserProfile.objects.filter(user=user).update(phone=serializer.validated_data)
         else:

@@ -50,6 +50,10 @@ def send_business_chat(instance, created, **_):
         chat_user = chat.user
         chat_business = chat.business
 
+        # User muted the chat
+        sender_muted = chat.sender_mute
+        receiver_muted = chat.receiver_mute
+
         if is_receiver_user:
             channel_name = f"user.{chat_user.uuid}"
             device = Device.objects.filter(user=chat_user).first()
@@ -62,10 +66,10 @@ def send_business_chat(instance, created, **_):
 
             msg_sender = chat_user
 
-        serialized = BusinessChatSerializer(
-            chat, context={"is_user": is_receiver_user})
+        serialized = BusinessChatSerializer(chat, context={"is_user": is_receiver_user})
 
         send_data_to_socket_channel(channel_name, SocketActions.CHAT, serialized.data)
 
-        if device:
+        if device and (is_receiver_user and not sender_muted) or (
+                not is_receiver_user and not receiver_muted):
             device.send_notification(msg_sender, message, NotificationType.BUSINESS_MESSAGE)

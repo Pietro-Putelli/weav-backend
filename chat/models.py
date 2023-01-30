@@ -57,6 +57,9 @@ class ChatMessage(Message):
 
 
 class AbstractChat(TimestampModel):
+    sender_mute = models.BooleanField(default=False)
+    receiver_mute = models.BooleanField(default=False)
+    
     class Meta:
         abstract = True
 
@@ -70,9 +73,6 @@ class Chat(AbstractChat):
         "users.User", on_delete=CASCADE, db_index=False, related_name="chat_sender")
     receiver = models.ForeignKey(
         "users.User", on_delete=CASCADE, db_index=False, related_name="chat_receiver")
-
-    sender_mute = models.BooleanField(default=False)
-    receiver_mute = models.BooleanField(default=False)
 
     # The last message appears when use deleted the chat
     sender_deleted_to = models.ForeignKey(

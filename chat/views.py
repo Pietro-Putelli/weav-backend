@@ -59,13 +59,11 @@ class ChatView(AuthenticationMixinAPIView):
 
         offset = cast_to_int(params.get("offset"))
 
-        chats = get_my_chats(request.user, offset)
+        user = request.user or request.business
+
+        chats = get_my_chats(user, offset)
 
         response = {"chats": chats}
-
-        # if offset == 0:
-        #     chance = get_current_chance(request.user)
-        #     response["chance"] = chance
 
         return Response(response, status=HTTP_200_OK)
 
@@ -192,16 +190,26 @@ def mute_chat(request):
     data = request.data
 
     chat_id = data.get("id")
+    type = data.get("type")
+    is_business = data.get("is_business")
+
+    model = get_chat_model(type)
 
     try:
-        chat = Chat.objects.get(id=chat_id)
+        chat = model.objects.get(id=chat_id)
     except Chat.DoesNotExist:
         return Response(status=HTTP_404_NOT_FOUND)
 
-    if chat.sender == request.user:
-        chat.sender_mute = not chat.sender_mute
+    if type == "business":
+        if is_business:
+            chat.receiver_mute = not chat.receiver_mute
+        else:
+            chat.sender_mute = not chat.sender_mute
     else:
-        chat.receiver_mute = not chat.receiver_mute
+        if chat.sender == request.user:
+            chat.sender_mute = not chat.sender_mute
+        else:
+            chat.receiver_mute = not chat.receiver_mute
 
     chat.save()
 
