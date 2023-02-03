@@ -24,6 +24,8 @@ class NotificationType:
     NEW_EVENT = "new_event"
     EVENT_REPOST = "event_repost"
 
+    BUSINESS_APPROVED = "business_approved"
+
 
 def format_chat_notification(sender, message):
     username = sender.username
@@ -64,12 +66,14 @@ def format_chat_notification(sender, message):
 
 def format_business_chat_notification(sender, message):
     is_business = isinstance(sender, Business)
-    content = "New message"
 
     if is_business:
         username = "🍸 " + sender.name
+        content = message.content
     else:
         username = f"[{message.chat.business.name}]: " + sender.username
+        # Because messages are encrypted
+        content = "New message"
 
     from chat.serializers import BusinessChatSerializer
     chat = BusinessChatSerializer(message.chat, context={"is_user": is_business}).data
@@ -101,7 +105,7 @@ def send_ios_notification(device_token, sender, message, type):
         "Authorization": f"bearer {token}",
     }
 
-    title, body = "Weav", None
+    title, subtitle, body = "Weav", "", ""
 
     payload = {}
 
@@ -115,7 +119,7 @@ def send_ios_notification(device_token, sender, message, type):
 
     elif type == NotificationType.FRIEND_REQUEST:
         title = sender.username
-        body = "Sent you a friend request"
+        body = "🤝 Sent you a friend request"
         payload["user"] = ShortUserProfileSerializer(sender).data
 
     elif type == NotificationType.FRIEND_REQUEST_ACCEPTED:
@@ -124,13 +128,7 @@ def send_ios_notification(device_token, sender, message, type):
         payload["user_id"] = sender.uuid
 
     elif type == NotificationType.MOMENT_MENTION:
-        title = f"{sender.username}"
-        body = "Mentioned you in a moment"
-        payload["moment_id"] = message.uuid
-
-    elif type == NotificationType.MOMENT_BUSINESS_MENTION:
-        # In this case the message is the moment
-        title = f"[{message.business_tag.name}]: {sender.username}"
+        title = f"🔥 {sender.username}"
         body = "Mentioned you in a moment"
         payload["moment_id"] = message.uuid
 
@@ -146,6 +144,10 @@ def send_ios_notification(device_token, sender, message, type):
         body = f"{sender.name} created a new event"
         payload["event_id"] = message.uuid
 
+    elif type == NotificationType.BUSINESS_APPROVED:
+        title = f"🚀 Welcome to Weav"
+        subtitle = f"Hey {message.owner.username} your business has been approved"
+
     # If the body does not exists, don't send the notification
     if body is None:
         return False
@@ -155,6 +157,7 @@ def send_ios_notification(device_token, sender, message, type):
             "alert": {
                 "title": title,
                 "body": body,
+                "subtitle": subtitle
             },
             "badge": 1,
             "sound": "default",

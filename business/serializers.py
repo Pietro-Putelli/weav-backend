@@ -124,13 +124,6 @@ class ShortBusinessSerializer(serializers.ModelSerializer, BusinessIdSerializer)
         return "event"
 
 
-class ShortChatBusinessSerializer(ShortBusinessSerializer):
-    public_key = serializers.CharField()
-
-    class Meta(ShortBusinessSerializer.Meta):
-        fields = SHORT_BUSINESS_SERIALIZER_FIELDS + ("public_key",)
-
-
 class ShortMyBusinessSerializer(ShortBusinessSerializer):
     auth_token = serializers.SerializerMethodField()
 
@@ -208,7 +201,7 @@ class EditBusinessSerializer(serializers.ModelSerializer, CategoriesBusinessSeri
 
     class Meta:
         model = Business
-        exclude = ("owner", "settings", "extra_data", "likes")
+        exclude = ("owner", "extra_data", "likes")
 
 
 class MyBusinessSerializer(EditBusinessSerializer):

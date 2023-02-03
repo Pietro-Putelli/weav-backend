@@ -5,7 +5,11 @@ from business.models import Business, BusinessToken
 
 @admin.action(description='Mark selected business as approved')
 def approve_business(_, __, queryset):
-    queryset.update(is_approved=True)
+    # By using queryset.update(is_approved=True) the save() method is not called, so the signal is not triggered
+
+    for business in queryset:
+        business.is_approved = True
+        business.save()
 
 
 @admin.register(Business)

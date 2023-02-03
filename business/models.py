@@ -72,8 +72,6 @@ class Business(TimestampModel):
     # Business personal settings
     settings = models.JSONField(default=get_default_settings, **allow_blank)
 
-    public_key = models.TextField(max_length=64, null=True, blank=True, default=None)
-
     objects = BusinessManager()
 
     class Meta:

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from business.serializers import ShortBusinessSerializer, ShortChatBusinessSerializer
+from business.serializers import ShortBusinessSerializer
 from moments.serializers import UserMomentSerializer, EventMomentSerializer
 from profiles.serializers import ShortUserProfileSerializer, ShortUserProfileChatSerializer
 from .models import BusinessChatMessage, ChatMessage
@@ -143,7 +143,7 @@ class BusinessChatSerializer(serializers.Serializer):
 
     def get_business(self, instance):
         if self.is_user():
-            return ShortChatBusinessSerializer(instance.business).data
+            return ShortBusinessSerializer(instance.business).data
         return None
 
     def get_messages(self, instance):

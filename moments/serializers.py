@@ -5,7 +5,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 from business.models import Business
-from business.serializers import ShortBusinessSerializer, ShortChatBusinessSerializer
+from business.serializers import ShortBusinessSerializer
 from image_detector.NSFWDetector import is_moderated_source_valid
 from insights.utils import add_repost_to_event, add_repost_to_business
 from moments.models import EventMomentSlice, UserMoment, EventMoment

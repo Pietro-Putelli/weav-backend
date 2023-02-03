@@ -4,10 +4,8 @@ from django.db.models.signals import post_save
 from django.test import TestCase
 
 from business.models import Business
-from business.signals import rename_business_dir
 from core.test_utilis import get_mocked_file
 from moments.models import UserMoment, EventMoment, EventMomentSlice
-from profiles.models import BusinessProfile
 from servicies.date import date_from
 from shared.models import Location, BusinessCategory
 from users.models import User
@@ -101,8 +99,6 @@ class EventMomentTestCase(TestCase):
 
         moments = []
         slices = []
-
-        post_save.disconnect(rename_business_dir, sender=Business)
 
         for i in range(0, ENTRIES_COUNT):
             location = Location.objects.create(coordinate=COORDINATE)
