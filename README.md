@@ -12,3 +12,4 @@
 2. `database` - The spatial database postgis/postgis
 3. `redis` - The redis server
 4. `nsfw` - The nsfw server to check image validity
+5. `nginx`
