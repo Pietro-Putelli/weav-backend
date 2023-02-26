@@ -6,7 +6,7 @@
 
 `docker-compose up`
 
-#### There are 4 docker containers:
+#### There are 5 docker containers:
 
 1. `app` - The backend server
 2. `database` - The spatial database postgis/postgis
