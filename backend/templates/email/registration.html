@@ -1,0 +1,324 @@
+{% block html_body %}
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                padding-top: 2em;
+                background: #000;
+                font-family: Raleway, sans-serif;
+            }
+
+            u + .body .gmail-blend-screen {
+                background: #000;
+                mix-blend-mode: screen;
+            }
+
+            u + .body .gmail-blend-difference {
+                background: #000;
+                mix-blend-mode: difference;
+            }
+
+            td {
+                text-align: center;
+                color: white;
+                padding: 6px;
+            }
+
+            p {
+                margin: 0;
+                color: #fff;
+                text-align: center
+            }
+
+            table {
+                width: 100%;
+                margin: auto;
+            }
+
+            .logo {
+                width: 100px;
+                height: 100px;
+            }
+
+            .title {
+                font-size: 4em;
+                font-weight: bold;
+                letter-spacing: 10px;
+            }
+
+            .tagline {
+                text-transform: uppercase;
+                font-size: 1em;
+                font-weight: bold;
+                letter-spacing: 5px;
+            }
+
+            .button {
+                padding: 12px 20px;
+                color: white;
+                font-weight: 500;
+                text-transform: uppercase;
+                text-align: center;
+                border-radius: 16px;
+                letter-spacing: 4px;
+                display: inline-block;
+                background-image: linear-gradient(#3E08A3, #3E08A3);
+            }
+
+            a {
+                text-decoration: none;
+                color: inherit;
+            }
+
+            a:hover {
+                color: #fff;
+            }
+
+            .qrTitle {
+                display: inline-block;
+                text-transform: uppercase;
+                font-size: 0.8em;
+                font-weight: 500;
+                letter-spacing: 3px;
+            }
+
+            .hairlineContainer {
+                display: inline-block;
+            }
+
+            hr {
+                border: none;
+                background-color: white;
+                opacity: 0.5;
+                height: 0.5px;
+                width: 8em;
+            }
+
+            .qrcode {
+                width: 12em;
+                height: 12em;
+                padding: 1em;
+                display: inline-block;
+                border-radius: 1em;
+                border: none;
+                background-image: linear-gradient(#110D21, #110D21);
+            }
+
+            .qrImage {
+                width: 100%;
+                height: 100%;
+            }
+
+            .copyright {
+                color: #fff;
+                text-align: center;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                font-weight: 500;
+                font-size: 0.6em;
+            }
+
+            .socialIconContainer {
+                display: inline-flex;
+                padding: 1em;
+                margin: 0em 0.4em;
+                background-image: linear-gradient(#110D21, #110D21);
+                border-radius: 1.5em;
+            }
+
+            .socialIconsContainer {
+                padding-top: 2em;
+            }
+
+            .socialIconImg {
+                width: 1.5em;
+                height: 1.5em;
+            }
+
+            .footer {
+                padding-top: 1em;
+                padding-bottom: 1em;
+                background-image: linear-gradient(#110D21, #110D21);
+            }
+
+            .buttonTitle {
+                font-weight: bold;
+                font-size: 1em;
+            }
+
+            /* create media for mobile device */
+
+            @media only screen and (max-width: 600px) {
+                hr {
+                    width: 4em;
+                    border: none;
+                    background-color: white;
+                    height: 0.5px;
+                }
+
+                .tagline {
+                    padding: 0px 8px;
+                }
+
+                .qrcode {
+                    width: 8em;
+                    height: 8em;
+                    padding: 0.8em;
+                }
+
+                .qrTitle {
+                    font-size: 0.8em;
+                }
+
+                .copyright {
+                    font: 400 0.5em sans-serif;
+                }
+
+                .socialIconContainer {
+                    margin: 0em 0.2em;
+                    padding: 0.8em;
+                    border-radius: 1.2em;
+                }
+
+                .socialIconImg {
+                    width: 1em;
+                    height: 1em;
+                }
+            }
+
+            @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@500;600;700&family=Roboto:wght@300&display=swap');
+        </style>
+    </head>
+
+    <body class="body"
+          style="background-image: url('https://weav.it/assets/email/background.png');">
+    <div style="display:none;font-size:1px; line-height:1px;max-width:0px;opacity:0; overflow:hidden;mso-hide:all;">
+        {{ preview }}
+        &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+        &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+        &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+        &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+        &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+        &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+        &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+        &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+        &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+        &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+        &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+    </div>
+
+    <table role="presentation">
+        <tr>
+            <td style="padding-top:2em;">
+                <img src="https://weav.it/assets/logo.png" alt="logo" class="logo"/>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <div class="gmail-blend-screen">
+                    <div class="gmail-blend-difference">
+                        <p class="title">WEAV</p>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <div class="gmail-blend-screen">
+                    <div class="gmail-blend-difference">
+                        <p class="tagline">WHERE GREAT THINGS HAPPEN</p>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding-top:2em; padding-bottom: 1em;">
+                <div class="button">
+                    <a href={{ token_url }}>
+                        <div class="gmail-blend-screen">
+                            <div class="gmail-blend-difference">
+                                <p class="buttonTitle">{{ language.complete_registration }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </td>
+        </tr>
+
+        <tr style="text-align: center;">
+            <td class="hairlineContainer">
+                <div class="gmail-blend-screen">
+                    <div class="gmail-blend-difference">
+                        <hr/>
+                    </div>
+                </div>
+            </td>
+
+            <td class="qrTitle">
+                <div class="gmail-blend-screen">
+                    <div class="gmail-blend-difference">
+                        {{ language.or_use_qr_code }}
+                    </div>
+                </div>
+            </td>
+
+            <td class="hairlineContainer">
+                <div class="gmail-blend-screen">
+                    <div class="gmail-blend-difference">
+                        <hr/>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding-top: 2em;">
+                <div class="qrcode">
+                    <img src={{ qr_url }} alt="qrcode" class="qrImage"/>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="socialIconsContainer">
+                <a class="socialIconContainer" href="https://www.instagram.com/weav_app/">
+                    <img src="https://weav.it/assets/icons/instagram.png" alt="qrcode"
+                         class="socialIconImg"/>
+                </a>
+                <a class="socialIconContainer" href="https://www.tiktok.com/@_weav_/">
+                    <img src="https://weav.it/assets/icons/tiktok.png" alt="qrcode"
+                         class="socialIconImg"/>
+                </a>
+                <a class="socialIconContainer" href="https://weav.it/">
+                    <img src="https://weav.it/assets/icons/link.png" alt="qrcode"
+                         class="socialIconImg"/>
+                </a>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding-top: 1em;">
+                <div class="footer">
+                    <div class="gmail-blend-screen">
+                        <div class="gmail-blend-difference">
+                            <p class="copyright">Copyright © 2023 Weav</p>
+                            <p class="copyright">All rights reserved</p>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+    </body>
+
+    </html>
+{% endblock html_body %}
